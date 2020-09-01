@@ -18,27 +18,36 @@ namespace MoneyApp
 
         private async void ButtonSalary_Clicked(object sender, EventArgs e)
         {
-            var result =
-          await DisplayAlert("Confirmation",
-          "Are you sure? ",
-          "OK", "Cancel");
-            if (result == true)
+            
+            if(String.IsNullOrEmpty(Salary.Text)|| String.IsNullOrEmpty(source.Text))
             {
-                addSalary add = new addSalary()
-                {
-
-                    mySalary = Salary.Text,
-                    mySource = source.Text,
-                    date = DateTime.Now.ToString()
-                };
-
-                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                {
-                    conn.CreateTable<addSalary>();
-                    int rows = conn.Insert(add);
-                }
-                OnAppearing();
+                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
             }
+            else
+            {
+                var result =
+                  await DisplayAlert("Confirmation",
+                  "Are you sure? ",
+                  "OK", "Cancel");
+                if (result == true)
+                {
+                    addSalary add = new addSalary()
+                    {
+
+                        mySalary = Salary.Text,
+                        mySource = source.Text,
+                        date = DateTime.Now.ToString()
+                    };
+
+                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                    {
+                        conn.CreateTable<addSalary>();
+                        int rows = conn.Insert(add);
+                    }
+                    OnAppearing();
+                }
+            }
+            
                 
         }
 
@@ -82,19 +91,27 @@ namespace MoneyApp
 
         private async void ButtonEdit_Clicked(object sender, EventArgs e)
         {
-            var result =
-          await DisplayAlert("Confirmation",
-          "Are you sure? ",
-          "OK", "Cancel");
-            if (result == true)
+            if(Salary.Text.Equals("") || source.Text.Equals(""))
             {
-                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                {
-                    conn.CreateTable<addSalary>();
-                    var updateMarks = conn.ExecuteScalar<addSalary>("UPDATE Money Set mySalary  = ? , mySource = ? WHERE id = ?", Salary.Text, source.Text, ide);
-                }
+                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
             }
-            OnAppearing();
+            else
+            {
+                var result =
+                  await DisplayAlert("Confirmation",
+                  "Are you sure? ",
+                  "OK", "Cancel");
+                if (result == true && !Salary.Text.Equals("") && !source.Text.Equals(""))
+                {
+                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                    {
+                        conn.CreateTable<addSalary>();
+                        var updateMarks = conn.ExecuteScalar<addSalary>("UPDATE Money Set mySalary  = ? , mySource = ? WHERE id = ?", Salary.Text, source.Text, ide);
+                    }
+                }
+                OnAppearing();
+            }
+                
         }
 
         private async void ButtonDelete_Clicked(object sender, EventArgs e)
@@ -103,7 +120,7 @@ namespace MoneyApp
           await DisplayAlert("Confirmation",
           "Are you sure?",
           "OK", "Cancel");
-            if (result == true)
+            if(result == true && !Salary.Text.Equals("") && !source.Text.Equals(""))
             {
                 using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                 {

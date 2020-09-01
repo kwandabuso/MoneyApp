@@ -14,7 +14,12 @@
         <StackLayout >
             <Entry x:Name="source" Placeholder="enter source"/>
             <Entry x:Name="Salary" Placeholder="enter salary"/>
+
+        </StackLayout>
+        <StackLayout Orientation="Horizontal" >
             
+            <Label Text="Total: "/>
+            <Label x:Name="Total"/>
         </StackLayout>
         <StackLayout Orientation="Horizontal">
             <Button x:Name="ButtonSalary" Text="Submit" Clicked="ButtonSalary_Clicked"/>
@@ -27,9 +32,9 @@
                 <DataTemplate>
                     <ViewCell >
                         <StackLayout Orientation="Horizontal" Focused="StackLayout_Focused">
-                            <Label Text = "{Binding mySource}" TextColor = "Black"/>
-                            <Label Text = "{Binding mySalary}" TextColor = "Black"/>
-                            <Label Text = "{Binding date}" TextColor = "Black"/>
+                            <Label Text = " {Binding mySource}" TextColor = "Black"/>
+                            <Label Text = " {Binding mySalary}" TextColor = "Black"/>
+                            <Label Text = " {Binding date}" TextColor = "Black"/>
                           
                         </StackLayout>
                     </ViewCell>

@@ -7,27 +7,36 @@
              x:Class="MoneyApp.AddSalary">
 
 
-    <StackLayout>
-        <Entry x:Name="Salary" Placeholder="enter salary" Margin="20"/>
-        <Entry x:Name="source" Placeholder="enter source" Margin="20"/>
-        <Button x:Name="ButtonSalary" Text="Submit" Margin="20" Clicked="ButtonSalary_Clicked"/>
-        
-        <ListView x:Name="MyListView">
+
+
+    <StackLayout Margin="20">
+
+        <StackLayout >
+            <Entry x:Name="source" Placeholder="enter source"/>
+            <Entry x:Name="Salary" Placeholder="enter salary"/>
+            
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Button x:Name="ButtonSalary" Text="Submit" Clicked="ButtonSalary_Clicked"/>
+            <Button x:Name="ButtonEdit" Text="Edit" Clicked="ButtonEdit_Clicked"/>
+            <Button x:Name="ButtonDelete" Text="Delete" Clicked="ButtonDelete_Clicked"/>
+            
+        </StackLayout>
+            <ListView x:Name="MyListView" ItemSelected="EvetClicked">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Horizontal">
+                    <ViewCell >
+                        <StackLayout Orientation="Horizontal" Focused="StackLayout_Focused">
                             <Label Text = "{Binding mySource}" TextColor = "Black"/>
                             <Label Text = "{Binding mySalary}" TextColor = "Black"/>
-                            <Label Text = "{Binding isActive}" TextColor = "Black"/>
-
+                            <Label Text = "{Binding date}" TextColor = "Black"/>
+                          
                         </StackLayout>
                     </ViewCell>
 
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+    
     </StackLayout>
-
-
 </ContentPage>

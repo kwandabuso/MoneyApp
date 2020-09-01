@@ -72,9 +72,9 @@ namespace MoneyApp.XamForms
             using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
             {
 
-                var apple = from s in conn.Table<addSalary>()
-                            where s.isActive.Equals("true")
-                            select s;
+                //var apple = from s in conn.Table<addSalary>()
+                //            where s.isActive.Equals("true")
+                //            select s;
 
 
                 

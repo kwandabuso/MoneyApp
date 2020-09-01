@@ -29,7 +29,7 @@ namespace MoneyApp.Classes
             set;
         }
 
-        public Boolean isActive
+        public string date
         {
             get;
             set;

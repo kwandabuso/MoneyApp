@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="MoneyApp.MainPage">
+
+    <StackLayout>
+        <!-- Place new controls here -->
+        <Button x:Name="Add" Text="ADD" TextColor="White" FontSize="50" BackgroundColor="#211a23" Margin="1" HeightRequest="120" Clicked="Add_Clicked"/>
+
+        <Button x:Name="budget" Text="budget" TextColor="White" FontSize="50" BackgroundColor= "#211a23" Margin="1" HeightRequest="120" Clicked="budget_Clicked"/>
+
+        <Button x:Name="spend" Text="spend" TextColor="White" FontSize="50" BackgroundColor="#211a23" Margin="1" HeightRequest="120" Clicked="spend_Clicked"/>
+
+        <Button x:Name="savings" Text="savings" TextColor="White" FontSize="50" BackgroundColor="#211a23" Margin="1" HeightRequest="120" Clicked="savings_Clicked" />
+
+        <Button x:Name="reports" Text="reports" TextColor="White" FontSize="50" FontFamily="" BackgroundColor="#211a23"  Margin="1" HeightRequest="120" />
+
+    </StackLayout>
+
+</ContentPage>

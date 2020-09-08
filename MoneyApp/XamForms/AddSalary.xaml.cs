@@ -77,6 +77,10 @@ namespace MoneyApp
                             
                             
                         }
+
+                        Salary.Text = "";
+                        source.Text = "";
+
                     }
 
                    
@@ -154,6 +158,8 @@ namespace MoneyApp
                         global = new globals();
                         total = UpdateAmount();
                         var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
+                        Salary.Text = "";
+                        source.Text = "";
                     }
                 }
                 OnAppearing();
@@ -175,20 +181,21 @@ namespace MoneyApp
                   "Are you sure?",
                   "OK", "Cancel");
                     if (result == true && !Salary.Text.Equals("") && !source.Text.Equals(""))
-                {
-                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                     {
+                        using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                        {
 
-                        conn.CreateTable<addSalary>();
-                        var updateMarks = conn.ExecuteScalar<addSalary>("DELETE FROM Money WHERE id = ?", ide);
-
-
-                        total = 0;
-                        global = new globals();
-                        total = UpdateAmountOnDelete();
-                        var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
+                            conn.CreateTable<addSalary>();
+                            var updateMarks = conn.ExecuteScalar<addSalary>("DELETE FROM Money WHERE id = ?", ide);
+                            
+                            total = 0;
+                            global = new globals();
+                            total = UpdateAmountOnDelete();
+                            var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
+                            Salary.Text = "";
+                            source.Text = "";
+                        }
                     }
-                }
                 OnAppearing();
             }
 

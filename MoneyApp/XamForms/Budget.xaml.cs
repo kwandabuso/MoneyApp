@@ -10,20 +10,23 @@ namespace MoneyApp.XamForms
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Budget : ContentPage
     {
-
+        int ide;
+        globals global;
+        double totalBudget;
+        double oldAmount;
         public Budget()
         {
             InitializeComponent();
         }
         public int Total { get; set; }
+
         private void ButtonAddBudget_Clicked(object sender, EventArgs e)
         {
             var fkey = getForeighKey();
             BudgetCls add = new BudgetCls()
             {
                 item = Item.Text,
-                amount = Amount.Text,
-                FK = int.Parse(fkey),
+                amount = double.Parse(Amount.Text),
                 addedAt = DateTime.Now.ToString(),
                 updatedAt = DateTime.Now.ToString()
                 
@@ -37,6 +40,7 @@ namespace MoneyApp.XamForms
                 OnAppearing();
             }
         }
+
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -52,13 +56,14 @@ namespace MoneyApp.XamForms
                     var sala = mysalary.amount;
                     if (sala != null)
                     {
-                        Total += int.Parse(mysalary.amount);
+                        //Total += int.Parse(mysalary.amount);
                     }
                     
                 }
 
             }
-            total.Text += Total.ToString();
+            
+            total.Text = getBudgetTotal().ToString();
         }
 
         public string getForeighKey()
@@ -102,7 +107,122 @@ namespace MoneyApp.XamForms
             total.Text += Total.ToString();*/
         }
 
+        private async void ButtonEdit_Clicked(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+            {
+                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
+            }
+            else
+            {
+                var result =
+                  await DisplayAlert("Confirmation",
+                  "Are you sure? ",
+                  "OK", "Cancel");
+                if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
+                {
+                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                    {
+                        conn.CreateTable<BudgetCls>();
+                        var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
+
+                       
+                        Item.Text = "";
+                        Amount.Text = "";
+                    }
+                }
+                
+                OnAppearing();
+            }
+        }
+
+        private async void ButtonDelete_Clicked(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+            {
+                await DisplayAlert("Alert", "Please select record to delete? ", "OK");
+            }
+            else
+            {
+                var result =
+                  await DisplayAlert("Confirmation",
+                  "Are you sure?",
+                  "OK", "Cancel");
+                if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
+                {
+                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                    {
+
+                        conn.CreateTable<BudgetCls>();
+                        var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget WHERE id = ?", ide);
+
+                        totalBudget = 0;
+                        global = new globals();
+                        totalBudget = UpdateAmountOnDelete();
+                        var updateMoney = conn.ExecuteScalar<BudgetCls>("UPDATE Budget Set amount  = ?", totalBudget);
+                        Item.Text = "";
+                        Amount.Text = "";
+                    }
+                }
+                OnAppearing();
+            }
+        }
+
+        private void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            var obj = (BudgetCls)e.SelectedItem;
+            ide = Convert.ToInt32(obj.id);
+
+            Item.Text = obj.item;
+            Amount.Text = obj.amount.ToString();
+        }
+
+        private double getBudgetTotal()
+        {
+            
+            List<BudgetCls> intList = new List<BudgetCls>();
+            var Fkey = 0.0;
+
+            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            {
+                conn.CreateTable<BudgetCls>();
+
+                var foreign = conn.Query<BudgetCls>("SELECT amount FROM Budget");
+
+                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
 
 
+
+                foreach (var fK in foreign)
+                {
+                    if (!string.IsNullOrEmpty(fK.amount.ToString()))
+                    {
+                        Fkey += fK.amount;
+                    }
+
+                }
+
+            }
+
+            return Fkey;
+        }
+
+        private double UpdateAmountOnDelete()
+        {
+
+            var newAmount = double.Parse(Amount.Text);
+            var updateAmount = 0.0;
+            var difference = 0.0;
+
+            global = new globals();
+            updateAmount = global.budgetMinusOnTotal(newAmount);
+
+            return updateAmount;
+        }
+
+        private void StartBudget_Clicked(object sender, EventArgs e)
+        {
+
+        }
     }
 }

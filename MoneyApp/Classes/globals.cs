@@ -64,6 +64,35 @@ namespace MoneyApp.Classes
 
             return Fkey - oldAmount;
         }
+        public double budgetMinusOnTotal(double oldAmount)
+        {
+            List<ActiveMoney> intList = new List<ActiveMoney>();
+            var Fkey = 0.0;
+
+            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            {
+                conn.CreateTable<BudgetCls>();
+                var foreign = conn.Query<BudgetCls>("SELECT amount FROM Budget");
+
+                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
+
+
+
+                foreach (var fK in foreign)
+                {
+                    if (!string.IsNullOrEmpty(fK.amount.ToString()))
+                    {
+                        Fkey = fK.amount;
+                    }
+
+
+                }
+
+            }
+
+
+            return Fkey - oldAmount;
+        }
         public double getTotal()
         {
             List<ActiveMoney> intList = new List<ActiveMoney>();

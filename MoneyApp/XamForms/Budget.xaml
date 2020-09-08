@@ -6,21 +6,26 @@
              mc:Ignorable="d"
              x:Class="MoneyApp.XamForms.Budget">
 
-    <StackLayout>
+    <StackLayout Margin="20">
         <Entry x:Name="Item" Placeholder="enter budget Item"/>
         <Entry x:Name="Amount" Placeholder="enter Amount"/>
         
-        <Button x:Name="ButtonAddBudget" Text="Submit" Margin="20" Clicked="ButtonAddBudget_Clicked"/>
-
+        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+            <Button x:Name="ButtonAddBudget" Text="Submit" Clicked="ButtonAddBudget_Clicked"/>
+            <Button x:Name="ButtonEdit" Text="Edit" Clicked="ButtonEdit_Clicked"/>
+            <Button x:Name="ButtonDelete" Text="Delete" Clicked="ButtonDelete_Clicked"/>
+        </StackLayout>
+        
+       
         <Label Text="TOTAL" x:Name="total"/>
         
-        <ListView x:Name="MyListView">
+        <ListView x:Name="MyListView" ItemSelected="MyListView_ItemSelected">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
                         <StackLayout Orientation="Horizontal">
-                            <Label Text = "{Binding item}" TextColor = "DarkGreen"/>
-                            <Label Text = "{Binding amount}" TextColor = "DarkGreen"/>
+                            <Label Text = "{Binding item}" />
+                            <Label Text = "{Binding amount}" />
 
                         </StackLayout>
                     </ViewCell>
@@ -28,7 +33,12 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-       
+
+        <StackLayout Orientation="Horizontal" >
+            <Button x:Name="StartBudget" BackgroundColor="Red" HorizontalOptions="FillAndExpand" Text="START MONTH" Clicked="StartBudget_Clicked"/>
+            
+        </StackLayout>
+        
     </StackLayout>
     
 </ContentPage>

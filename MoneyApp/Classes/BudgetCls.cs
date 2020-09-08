@@ -17,16 +17,13 @@ namespace MoneyApp.Classes
                 set;
             }
 
-            [ForeignKey(typeof(addSalary))]
-            public int FK { get; set; }
-
             public string item
             {
                 get;
                 set;
             }
 
-            public string amount
+            public double amount
             {
                 get;
                 set;

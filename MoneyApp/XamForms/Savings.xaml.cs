@@ -21,9 +21,7 @@ namespace MoneyApp.XamForms
             var fkey = getForeighKey();
             BudgetCls add = new BudgetCls()
             {
-
-                FK = int.Parse(fkey),
-                amount = getSalary(),
+               //amount = getSalary(),
                 addedAt = DateTime.Now.ToString()
 
             };

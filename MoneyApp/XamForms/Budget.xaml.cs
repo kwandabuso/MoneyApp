@@ -13,31 +13,39 @@ namespace MoneyApp.XamForms
         int ide;
         globals global;
         double totalBudget;
-        double oldAmount;
         public Budget()
         {
             InitializeComponent();
         }
         public int Total { get; set; }
 
-        private void ButtonAddBudget_Clicked(object sender, EventArgs e)
+        private async void ButtonAddBudget_Clicked(object sender, EventArgs e)
         {
-            var fkey = getForeighKey();
-            BudgetCls add = new BudgetCls()
+            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
             {
-                item = Item.Text,
-                amount = double.Parse(Amount.Text),
-                addedAt = DateTime.Now.ToString(),
-                updatedAt = DateTime.Now.ToString()
-                
-            };
-
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
+            }
+            else
             {
-                conn.CreateTable<BudgetCls>();
-                int rows = conn.Insert(add);
 
-                OnAppearing();
+                var fkey = getForeighKey();
+                BudgetCls add = new BudgetCls()
+                {
+                    item = Item.Text,
+                    amount = double.Parse(Amount.Text),
+                    addedAt = DateTime.Now.ToString(),
+                    updatedAt = DateTime.Now.ToString()
+
+                };
+
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<BudgetCls>();
+                    int rows = conn.Insert(add);
+                    Item.Text = "";
+                    Amount.Text = "";
+                    OnAppearing();
+                }
             }
         }
 
@@ -51,18 +59,18 @@ namespace MoneyApp.XamForms
                 var salarie = conn.Table<BudgetCls>().ToList();
                 MyListView.ItemsSource = salarie;
 
-                foreach(var mysalary in salarie)
-                {
-                    var sala = mysalary.amount;
-                    if (sala != null)
-                    {
-                        //Total += int.Parse(mysalary.amount);
-                    }
-                    
-                }
+                //foreach (var mysalary in salarie)
+                //{
+                //    var sala = mysalary.amount;
+                //    if (sala != null)
+                //    {
+                //        //Total += int.Parse(mysalary.amount);
+                //    }
+
+                //}
 
             }
-            
+
             total.Text = getBudgetTotal().ToString();
         }
 
@@ -81,13 +89,13 @@ namespace MoneyApp.XamForms
 
                 //stocksStartingWithA = conn.Query<addSalary>("SELECT * FROM Money WHERE isActive = false");
 
-                foreach(var fK in foreign)
+                foreach (var fK in foreign)
                 {
 
                     Fkey = fK.id.ToString();
 
                 }
-                
+
             }
 
             return Fkey;
@@ -126,12 +134,12 @@ namespace MoneyApp.XamForms
                         conn.CreateTable<BudgetCls>();
                         var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
 
-                       
+
                         Item.Text = "";
                         Amount.Text = "";
                     }
                 }
-                
+
                 OnAppearing();
             }
         }
@@ -156,10 +164,6 @@ namespace MoneyApp.XamForms
                         conn.CreateTable<BudgetCls>();
                         var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget WHERE id = ?", ide);
 
-                        totalBudget = 0;
-                        global = new globals();
-                        totalBudget = UpdateAmountOnDelete();
-                        var updateMoney = conn.ExecuteScalar<BudgetCls>("UPDATE Budget Set amount  = ?", totalBudget);
                         Item.Text = "";
                         Amount.Text = "";
                     }
@@ -179,7 +183,7 @@ namespace MoneyApp.XamForms
 
         private double getBudgetTotal()
         {
-            
+
             List<BudgetCls> intList = new List<BudgetCls>();
             var Fkey = 0.0;
 
@@ -211,8 +215,7 @@ namespace MoneyApp.XamForms
         {
 
             var newAmount = double.Parse(Amount.Text);
-            var updateAmount = 0.0;
-            var difference = 0.0;
+            double updateAmount = 0.0;
 
             global = new globals();
             updateAmount = global.budgetMinusOnTotal(newAmount);
@@ -220,9 +223,27 @@ namespace MoneyApp.XamForms
             return updateAmount;
         }
 
-        private void StartBudget_Clicked(object sender, EventArgs e)
+        private async void StartBudget_Clicked(object sender, EventArgs e)
         {
+            var result =
+                 await DisplayAlert("Confirmation",
+                 "Are you sure?",
+                 "OK", "Cancel");
+            if (result == true)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<ActiveMoney>();
+                    var foreign = conn.Query<ActiveMoney>("SELECT mySalary FROM ActiveMoney");
 
+                    
+                    global = new globals();
+                    totalBudget = global.calculateMinusOnTotal(getBudgetTotal());
+                    var updateMarks = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", totalBudget);
+                    
+                }
+            }
         }
     }
 }
+    

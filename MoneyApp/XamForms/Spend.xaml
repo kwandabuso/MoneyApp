@@ -6,28 +6,42 @@
              mc:Ignorable="d"
              x:Class="MoneyApp.XamForms.Spend">
 
-    <StackLayout>
-        <Entry Placeholder="Please enter ITEM" x:Name="Item"/>
-        <Entry Placeholder="Please enter Amount" x:Name="Amount"/>
+    <StackLayout Margin="20">
+        <StackLayout>
+            <Entry Placeholder="Please enter ITEM" x:Name="Item"/>
+            <Entry Placeholder="Please enter Amount" x:Name="Amount"/>
+
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+            <Button x:Name="Submit" Text="SUBMIT" Clicked="Button_Clicked"/>
+            <Button x:Name="Edit" Text="EDIT" Clicked="Edit_Clicked"/>
+            <Button x:Name="delete" Text="DELETE" Clicked="delete_Clicked"/>
+        </StackLayout>
+
+        <StackLayout Orientation="Horizontal">
+            <Label Text="Total"/>
+            <Label x:Name="TotalSpend"/>
+
+        </StackLayout>
         
-        <Button Text="SUBMIT" Clicked="Button_Clicked"/>
+        <StackLayout>
+            <ListView x:Name="MyListView" ItemSelected="EvetClicked">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text = "{Binding item}" TextColor = "Black"/>
+                                <Label Text = "{Binding amount}" TextColor = "Black"/>
+                                <Label Text = "{Binding addedAt}" TextColor = "Black"/>
 
-        <ListView x:Name="MyListView">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Horizontal">
-                            <Label Text = "{Binding item}" TextColor = "Black"/>
-                            <Label Text = "{Binding amount}" TextColor = "Black"/>
-                            <Label Text = "{Binding addedAt}" TextColor = "Black"/>
+                            </StackLayout>
+                        </ViewCell>
 
-                        </StackLayout>
-                    </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-
+        </StackLayout>
     </StackLayout>
-        
 </ContentPage>

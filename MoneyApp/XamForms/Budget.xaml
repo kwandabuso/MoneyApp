@@ -15,9 +15,12 @@
             <Button x:Name="ButtonEdit" Text="Edit" Clicked="ButtonEdit_Clicked"/>
             <Button x:Name="ButtonDelete" Text="Delete" Clicked="ButtonDelete_Clicked"/>
         </StackLayout>
+
+        <StackLayout Orientation="Horizontal">
+            <Label Text="TOTAL"/>
+            <Label Text="TOTAL" x:Name="total"/>
+        </StackLayout>
         
-       
-        <Label Text="TOTAL" x:Name="total"/>
         
         <ListView x:Name="MyListView" ItemSelected="MyListView_ItemSelected">
             <ListView.ItemTemplate>

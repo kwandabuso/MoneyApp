@@ -93,6 +93,66 @@ namespace MoneyApp.Classes
 
             return Fkey - oldAmount;
         }
+        public double getSavingsTotalById(string id)
+        {
+           
+            var Fkey = 0.0;
+
+            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            {
+                conn.CreateTable<spendMoney>();
+                var foreign = conn.Query<spendMoney>("SELECT Amount FROM Spend WHERE id = ?", id);
+
+                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
+
+
+
+                foreach (var fK in foreign)
+                {
+                    if (!string.IsNullOrEmpty(fK.amount.ToString()))
+                    {
+                        Fkey = fK.amount;
+                    }
+
+
+                }
+
+            }
+
+
+            return Fkey;
+        }
+
+        public double getSavingsTotal()
+        {
+
+            var Fkey = 0.0;
+
+            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            {
+                conn.CreateTable<spendMoney>();
+                var foreign = conn.Query<spendMoney>("SELECT Amount FROM Spend");
+
+                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
+
+
+
+                foreach (var fK in foreign)
+                {
+                    if (!string.IsNullOrEmpty(fK.amount.ToString()))
+                    {
+                        Fkey += fK.amount;
+                    }
+
+
+                }
+
+            }
+
+
+            return Fkey;
+        }
+
         public double getTotal()
         {
             List<ActiveMoney> intList = new List<ActiveMoney>();

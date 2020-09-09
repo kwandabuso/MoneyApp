@@ -233,7 +233,7 @@ namespace MoneyApp
 
             var newAmount = double.Parse(Salary.Text);
             var updateAmount = 0.0;
-            var difference = 0.0;
+            
 
             global = new globals();
             updateAmount = global.calculateMinusOnTotal(newAmount);

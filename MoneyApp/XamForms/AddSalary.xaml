@@ -12,36 +12,67 @@
     <StackLayout Margin="20">
 
         <StackLayout >
-            <Entry x:Name="source" Placeholder="enter source"/>
-            <Entry x:Name="Salary" Placeholder="enter salary"/>
+            <Entry x:Name="source" Placeholder="ENTER SOURCE"/>
+            <Entry x:Name="Salary" Placeholder="ENTER AMOUNT"/>
 
         </StackLayout>
+        
         <StackLayout Orientation="Horizontal" >
-            
-            <Label Text="Total: "/>
-            <Label x:Name="Total"/>
+
+            <Label Text="Total: " FontSize="Large" FontAttributes="Bold"/>
+            <Label x:Name="Total" FontSize="Large" FontAttributes="Bold"/>
         </StackLayout>
+        
         <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
+            
             <Button x:Name="ButtonSalary" Text="Submit" Clicked="ButtonSalary_Clicked"/>
             <Button x:Name="ButtonEdit" Text="Edit" Clicked="ButtonEdit_Clicked"/>
             <Button x:Name="ButtonDelete" Text="Delete" Clicked="ButtonDelete_Clicked"/>
-            
-        </StackLayout>
-            <ListView x:Name="MyListView" ItemSelected="EvetClicked">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell >
-                        <StackLayout Orientation="Horizontal" Focused="StackLayout_Focused">
-                            <Label Text = " {Binding mySource}"/>
-                            <Label Text = " {Binding mySalary}"/>
-                            <Label Text = " {Binding date}"/>
-                          
-                        </StackLayout>
-                    </ViewCell>
 
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        </StackLayout >
+
+        <StackLayout Margin="20,20">
+
+            <ListView x:Name="MyListView" ItemSelected="EvetClicked" ItemsSource="{Binding foreign}">
+                <ListView.Header>
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Text="INCOME SOURCE" Grid.Column="0" Grid.Row="0" />
+                        <Label Text="AMOUNT"  Grid.Column="1" Grid.Row="0"/>
+                        <Label Text="DATE" Grid.Column="2" Grid.Row="0"/>
+                    </Grid>
+                </ListView.Header>
+                
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell >
+                            <Grid HorizontalOptions="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <Label Text = " {Binding mySource}" FontSize="Medium" Grid.Column="0" />
+                                    <Label Text = " {Binding mySalary}" FontSize="Medium" Grid.Column="1"/>
+                                    <Label Text = " {Binding date}" FontSize="Medium" Grid.Column="2"/>
+
+                            </Grid>
+                        </ViewCell>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+            
     
     </StackLayout>
 </ContentPage>

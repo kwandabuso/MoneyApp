@@ -14,6 +14,8 @@ namespace MoneyApp.XamForms
         int ide;
         globals global;
         double total;
+        double totalBudget;
+        double oldAmount;
         public Spend()
         {
             InitializeComponent();
@@ -40,6 +42,11 @@ namespace MoneyApp.XamForms
                 {
                     conn.CreateTable<spendMoney>();
                     int rows = conn.Insert(add);
+
+                    deductFromTotal();
+
+
+
                     OnAppearing();
                 }
             }
@@ -74,19 +81,24 @@ namespace MoneyApp.XamForms
                   "OK", "Cancel");
                 if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
                 {
+                    
+
                     using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                     {
                         conn.CreateTable<spendMoney>();
                         var updateMarks = conn.ExecuteScalar<spendMoney>("UPDATE Spend Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
 
+
+
                         //UpdateAmount();
 
-                        //total = 0;
-                        //global = new globals();
-                        //total = UpdateAmount();
-                        //var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
-                        //Salary.Text = "";
-                        //source.Text = "";
+                        total = 0;
+                        global = new globals();
+                        total = global.calculateDifferenceOnTotal(oldAmount,double.Parse(Amount.Text));
+
+                        var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
+                        Item.Text = "";
+                        Amount.Text = "";
                     }
                 }
                 OnAppearing();
@@ -116,7 +128,7 @@ namespace MoneyApp.XamForms
 
                         total = 0;
                         global = new globals();
-                        total = UpdateAmountOnDelete();
+                        total = global.calculateTotal(oldAmount);
                         var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
                         Item.Text = "";
                         Amount.Text = "";
@@ -133,6 +145,8 @@ namespace MoneyApp.XamForms
             ide = Convert.ToInt32(obj.id);
             Item.Text = obj.item;
             Amount.Text = obj.amount.ToString();
+
+            oldAmount =double.Parse(Amount.Text);
         }
 
         private double UpdateAmountOnDelete()
@@ -142,9 +156,31 @@ namespace MoneyApp.XamForms
             var updateAmount = 0.0;
 
             global = new globals();
-            updateAmount = global.calculateMinusOnTotal(global.getSavingsTotalById(ide.ToString()));
+            updateAmount = global.calculateTotal(global.getSavingsTotalById(ide.ToString()));
 
             return updateAmount;
+        }
+
+        private async void deductFromTotal()
+        {
+            var result =
+                 await DisplayAlert("Confirmation",
+                 "Are you sure?",
+                 "OK", "Cancel");
+            if (result == true)
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<ActiveMoney>();
+                    var foreign = conn.Query<ActiveMoney>("SELECT mySalary FROM ActiveMoney");
+
+
+                    global = new globals();
+                    totalBudget = global.calculateMinusOnTotal(double.Parse(Amount.Text));
+                    var updateMarks = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", totalBudget);
+
+                }
+            }
         }
     }
 }

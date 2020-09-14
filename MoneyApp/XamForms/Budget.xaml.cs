@@ -59,16 +59,6 @@ namespace MoneyApp.XamForms
                 var salarie = conn.Table<BudgetCls>().ToList();
                 MyListView.ItemsSource = salarie;
 
-                //foreach (var mysalary in salarie)
-                //{
-                //    var sala = mysalary.amount;
-                //    if (sala != null)
-                //    {
-                //        //Total += int.Parse(mysalary.amount);
-                //    }
-
-                //}
-
             }
 
             total.Text = getBudgetTotal().ToString();
@@ -244,6 +234,8 @@ namespace MoneyApp.XamForms
                 }
             }
         }
+
+        
     }
 }
     

@@ -64,6 +64,7 @@ namespace MoneyApp.Classes
 
             return Fkey - oldAmount;
         }
+
         public double budgetMinusOnTotal(double oldAmount)
         {
             List<ActiveMoney> intList = new List<ActiveMoney>();
@@ -93,6 +94,7 @@ namespace MoneyApp.Classes
 
             return Fkey - oldAmount;
         }
+
         public double getSavingsTotalById(string id)
         {
            
@@ -103,6 +105,7 @@ namespace MoneyApp.Classes
                 conn.CreateTable<spendMoney>();
                 var foreign = conn.Query<spendMoney>("SELECT Amount FROM Spend WHERE id = ?", id);
 
+                var fforeign = conn.Query<spendMoney>("SELECT Amount FROM Spend");
                 //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
 
 
@@ -163,7 +166,7 @@ namespace MoneyApp.Classes
                 conn.CreateTable<ActiveMoney>();
                 var foreign = conn.Query<ActiveMoney>("SELECT mySalary FROM ActiveMoney");
 
-                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
+                
 
 
 
@@ -181,6 +184,24 @@ namespace MoneyApp.Classes
 
 
             return Fkey;
+        }
+
+        public double calculateDifferenceOnTotal(double oldAmount, double newAmount)
+        {
+            double diff = 0.0;
+            double total = 0.0;
+            if (oldAmount > newAmount)
+            {
+                diff = oldAmount - newAmount;
+                total = calculateMinusOnTotal(diff);
+            }
+            else
+            {
+                diff = oldAmount + newAmount;
+                total = calculateTotal(diff);
+            }
+                
+            return total;
         }
     }
 }

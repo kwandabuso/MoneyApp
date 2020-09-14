@@ -25,17 +25,40 @@
 
         </StackLayout>
         
+        
         <StackLayout>
-            <ListView x:Name="MyListView" ItemSelected="EvetClicked">
+            <ListView x:Name="MyListView" ItemSelected="EvetClicked" ItemsSource="{Binding foreign}">
+                <ListView.Header>
+                    <Grid BackgroundColor="Aquamarine">
+                        <Grid.ColumnDefinitions >
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions >
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Text="ITEM" Grid.Column="0" Grid.Row="0" />
+                        <Label Text="AMOUNT"  Grid.Column="1" Grid.Row="0"/>
+                        <Label Text="DATE" Grid.Column="2" Grid.Row="0"/>
+                    </Grid>
+                </ListView.Header>
+
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Orientation="Horizontal">
-                                <Label Text = "{Binding item}" TextColor = "Black"/>
-                                <Label Text = "{Binding amount}" TextColor = "Black"/>
-                                <Label Text = "{Binding addedAt}" TextColor = "Black"/>
+                            <Grid>
 
-                            </StackLayout>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Label Text = "{Binding item}" Grid.Column="0"/>
+                                <Label Text = "{Binding amount}" Grid.Column="1"/>
+                                <Label Text = "{Binding addedAt}" Grid.Column="2"/>
+
+                            </Grid>
                         </ViewCell>
 
                     </DataTemplate>

@@ -3,6 +3,9 @@ using System;
 using SQLite;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Collections.Generic;
+using System.Linq;
+using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 
 namespace MoneyApp
 {
@@ -100,11 +103,22 @@ namespace MoneyApp
             using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
             {
                 conn.CreateTable<addSalary>();
+
+
                 
-                var salarie = conn.Table<addSalary>().ToList();
+                // List<addSalary> myList = (from x in conn.Table<addSalary>().Where(x => x.date == currentDate) select x).ToList();
+
+                var now = DateTime.Now;
+                var startOfMonth = new DateTime(now.Year, 08, 25);
+
+                //var updateMoney = conn.ExecuteScalar<addSalary>("UPDATE Money Set date  = '8/26/2020 1:14:10 PM' where id = 44");
+
+                var foreign = conn.Query<addSalary>("SELECT id, mySalary, mySource, date FROM Money Where date BETWEEN '"+ startOfMonth + "' AND '"+ now + "'");
                 
-                MyListView.ItemsSource = salarie;
+                MyListView.ItemsSource = foreign;
+                //MyListView.ItemsSource = foreign;
                 Total.Text = global.getTotal().ToString();
+                //}
             }
            
         }
@@ -186,11 +200,16 @@ namespace MoneyApp
                         {
 
                             conn.CreateTable<addSalary>();
+                            //conn.Execute("DELETE FROM Money");
                             var updateMarks = conn.ExecuteScalar<addSalary>("DELETE FROM Money WHERE id = ?", ide);
-                            
-                            total = 0;
+
+                           
+
+
+                        total = 0;
                             global = new globals();
                             total = UpdateAmountOnDelete();
+                            conn.Execute("DELETE FROM ActiveMoney");
                             var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
                             Salary.Text = "";
                             source.Text = "";

@@ -20,23 +20,46 @@
             <Label Text="TOTAL"/>
             <Label Text="TOTAL" x:Name="total"/>
         </StackLayout>
-        
-        
-        <ListView x:Name="MyListView" ItemSelected="MyListView_ItemSelected">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Horizontal">
-                            <Label Text = "{Binding item}" />
-                            <Label Text = "{Binding amount}" />
 
-                        </StackLayout>
-                    </ViewCell>
 
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <StackLayout Margin="20,20">
 
+            <ListView x:Name="MyListView" ItemSelected="MyListView_ItemSelected"  ItemsSource="{Binding salarie}">
+                <ListView.Header>
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Text="ITEM" Grid.Column="0" Grid.Row="0"/>
+                        <Label Text="AMOUNT" Grid.Column="1" Grid.Row="0" />
+
+
+                    </Grid>
+                </ListView.Header>
+
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text = "{Binding item}" FontSize="Medium" Grid.Column="0" BackgroundColor="Aquamarine"/>
+                                <Label Text = "{Binding amount}" FontSize="Medium" Grid.Column="1" BackgroundColor="Chartreuse"/>
+
+                            </Grid>
+                        </ViewCell>
+
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
         <StackLayout Orientation="Horizontal" >
             <Button x:Name="StartBudget" BackgroundColor="Red" HorizontalOptions="FillAndExpand" Text="START MONTH" Clicked="StartBudget_Clicked"/>
             

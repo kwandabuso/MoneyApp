@@ -88,10 +88,6 @@ namespace MoneyApp.XamForms
                         conn.CreateTable<spendMoney>();
                         var updateMarks = conn.ExecuteScalar<spendMoney>("UPDATE Spend Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
 
-
-
-                        //UpdateAmount();
-
                         total = 0;
                         global = new globals();
                         total = global.calculateDifferenceOnTotal(oldAmount,double.Parse(Amount.Text));

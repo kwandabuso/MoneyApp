@@ -193,12 +193,12 @@ namespace MoneyApp.Classes
             if (oldAmount > newAmount)
             {
                 diff = oldAmount - newAmount;
-                total = calculateMinusOnTotal(diff);
+                total = calculateTotal(diff);
             }
             else
             {
-                diff = oldAmount + newAmount;
-                total = calculateTotal(diff);
+                diff =  newAmount - oldAmount;
+                total = calculateMinusOnTotal(diff);
             }
                 
             return total;

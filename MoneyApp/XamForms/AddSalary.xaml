@@ -13,12 +13,10 @@
 
         <StackLayout >
             <Entry x:Name="source" Placeholder="ENTER SOURCE"/>
-            <Entry x:Name="Salary" Placeholder="ENTER AMOUNT"/>
-
+            <Entry x:Name="Salary" Placeholder="ENTER AMOUNT" Keyboard="Numeric"/>
         </StackLayout>
-        
-        <StackLayout Orientation="Horizontal" >
 
+        <StackLayout Orientation="Horizontal" >
             <Label Text="Total: " FontSize="Large" FontAttributes="Bold"/>
             <Label x:Name="Total" FontSize="Large" FontAttributes="Bold"/>
         </StackLayout>
@@ -50,7 +48,6 @@
                     </Grid>
                 </ListView.Header>
                 
-
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell >
@@ -61,7 +58,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 
-                                <Label Text = " {Binding mySource}" FontSize="Medium" Grid.Column="0" />
+                                    <Label Text = " {Binding mySource}" FontSize="Medium" Grid.Column="0" />
                                     <Label Text = " {Binding mySalary}" FontSize="Medium" Grid.Column="1"/>
                                     <Label Text = " {Binding date}" FontSize="Medium" Grid.Column="2"/>
 
@@ -73,6 +70,5 @@
             </ListView>
         </StackLayout>
             
-    
     </StackLayout>
 </ContentPage>

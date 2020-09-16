@@ -8,7 +8,7 @@
 
     <StackLayout Margin="20">
         <Entry x:Name="Item" Placeholder="enter budget Item"/>
-        <Entry x:Name="Amount" Placeholder="enter Amount"/>
+        <Entry x:Name="Amount" Placeholder="enter Amount" Keyboard="Numeric"/>
         
         <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand">
             <Button x:Name="ButtonAddBudget" Text="Submit" Clicked="ButtonAddBudget_Clicked"/>

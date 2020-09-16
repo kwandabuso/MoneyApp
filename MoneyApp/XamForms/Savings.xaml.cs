@@ -16,86 +16,92 @@ namespace MoneyApp.XamForms
             InitializeComponent();
         }
 
-        private void addSavings_Clicked(object sender, EventArgs e)
+        private async void addSavings_Clicked(object sender, EventArgs e)
         {
-            var fkey = getForeighKey();
-            BudgetCls add = new BudgetCls()
+            try
             {
-               //amount = getSalary(),
-                addedAt = DateTime.Now.ToString()
+                var fkey = getForeighKeyAsync();
+                BudgetCls add = new BudgetCls()
+                {
+                    //amount = getSalary(),
+                    addedAt = DateTime.Now.ToString()
 
-            };
+                };
 
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-            {
-                conn.CreateTable<BudgetCls>();
-                int rows = conn.Insert(add);
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<BudgetCls>();
+                    int rows = conn.Insert(add);
 
-                OnAppearing();
+                    OnAppearing();
+                }
             }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+
         }
 
-        public string getForeighKey()
+        public async System.Threading.Tasks.Task<string> getForeighKeyAsync()
         {
-            List<addSalary> intList = new List<addSalary>();
             var Fkey = "";
-
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            try
             {
-                var foreign = conn.Query<addSalary>("SELECT id FROM Money WHERE isActive = true");
-
-                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
-
-                //var stocksStartingWithA = conn.Query<addSalary>("SELECT * FROM Money WHERE isActive = true");
-
-                //stocksStartingWithA = conn.Query<addSalary>("SELECT * FROM Money WHERE isActive = false");
-
-                foreach (var fK in foreign)
+                List<addSalary> intList = new List<addSalary>();
+                
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                 {
+                    var foreign = conn.Query<addSalary>("SELECT id FROM Money WHERE isActive = true");
 
-                    Fkey = fK.id.ToString();
+                    foreach (var fK in foreign)
+                    {
+
+                        Fkey = fK.id.ToString();
+
+                    }
 
                 }
-
             }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+            
 
             return Fkey;
         }
 
-        public string getSalary()
+        public async System.Threading.Tasks.Task<string> getSalaryAsync()
         {
             List<addSalary> intList = new List<addSalary>();
             var Fkey = "";
-
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            try
             {
 
-                //var apple = from s in conn.Table<addSalary>()
-                //            where s.isActive.Equals("true")
-                //            select s;
-
-
-                
-
-
-                conn.CreateTable<addSalary>();
-                var salarie = conn.Table<addSalary>().ToList() ;
-
-
-
-
-                MyListView.ItemsSource = salarie;
-
-
-                var foreign = conn.Query<addSalary>("SELECT mySalary FROM Money WHERE isActive = true");
-
-                foreach (var fK in foreign)
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                 {
 
-                    Fkey = fK.id.ToString();
+                    conn.CreateTable<addSalary>();
+                    var salarie = conn.Table<addSalary>().ToList();
+
+                    MyListView.ItemsSource = salarie;
+
+
+                    var foreign = conn.Query<addSalary>("SELECT mySalary FROM Money WHERE isActive = true");
+
+                    foreach (var fK in foreign)
+                    {
+
+                        Fkey = fK.id.ToString();
+
+                    }
 
                 }
-
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
             }
 
             return Fkey;

@@ -6,6 +6,7 @@ using Xamarin.Forms.Xaml;
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using System.IO;
 
 namespace MoneyApp
 {
@@ -23,103 +24,108 @@ namespace MoneyApp
 
         private async void ButtonSalary_Clicked(object sender, EventArgs e)
         {
-            
-            if(String.IsNullOrEmpty(Salary.Text)|| String.IsNullOrEmpty(source.Text))
+            try
             {
-                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
-            }
-            else
-            {
-                var result =
-                  await DisplayAlert("Confirmation",
-                  "Are you sure? ",
-                  "Yes", "Cancel");
-                if (result == true)
+                if (String.IsNullOrEmpty(Salary.Text) || String.IsNullOrEmpty(source.Text))
                 {
-                    addSalary add = new addSalary()
+                    await DisplayAlert("Alert", "Please enter all fields? ", "OK");
+                }
+                else
+                {
+                    var result =
+                      await DisplayAlert("Confirmation",
+                      "Are you sure? ",
+                      "Yes", "Cancel");
+                    if (result == true)
                     {
+                        addSalary add = new addSalary()
+                        {
 
-                        mySalary = Salary.Text,
-                        mySource = source.Text,
-                        date = DateTime.Now.ToString()
-                    };
+                            mySalary = Salary.Text,
+                            mySource = source.Text,
+                            date = DateTime.Now.ToString()
+                        };
 
-                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                    {
-                        conn.CreateTable<addSalary>();
-                        int rows = conn.Insert(add);
-                    }
-
-
-                    //
-                    if (result == true && !Salary.Text.Equals("") && !source.Text.Equals(""))
-                    {
                         using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                         {
-                            conn.CreateTable<ActiveMoney>();
-                            var foreign = conn.Query<ActiveMoney>("SELECT mySalary FROM ActiveMoney");
-
-                            if(foreign.Count == 0)
-                            {
-                                ActiveMoney addFunds = new ActiveMoney()
-                                {
-                                    mySalary = Salary.Text,
-                                };
-
-                               
-                                conn.CreateTable<ActiveMoney>();
-                                int rows = conn.Insert(addFunds);
-                               
-                            }
-                            else
-                            {
-                                global = new globals();
-                                total = global.calculateTotal(double.Parse(Salary.Text));
-                                var updateMarks = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
-                            }
-                            
-                            
+                            conn.CreateTable<addSalary>();
+                            int rows = conn.Insert(add);
                         }
 
-                        Salary.Text = "";
-                        source.Text = "";
 
+                        //
+                        if (result == true && !Salary.Text.Equals("") && !source.Text.Equals(""))
+                        {
+                            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                            {
+                                conn.CreateTable<ActiveMoney>();
+                                var foreign = conn.Query<ActiveMoney>("SELECT mySalary FROM ActiveMoney");
+
+                                if (foreign.Count == 0)
+                                {
+                                    ActiveMoney addFunds = new ActiveMoney()
+                                    {
+                                        mySalary = Salary.Text,
+                                    };
+
+
+                                    conn.CreateTable<ActiveMoney>();
+                                    int rows = conn.Insert(addFunds);
+
+                                }
+                                else
+                                {
+                                    global = new globals();
+                                    total = global.calculateTotal(double.Parse(Salary.Text));
+                                    var updateMarks = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
+                                }
+
+
+                            }
+
+                            Salary.Text = "";
+                            source.Text = "";
+
+                        }
+
+
+                        OnAppearing();
                     }
-
-                   
-                    OnAppearing();
                 }
             }
+            catch(Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString() , "OK");
+            }
             
-                
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
-            
-            base.OnAppearing();
-            global = new globals();
-            
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            try
             {
-                conn.CreateTable<addSalary>();
+                base.OnAppearing();
+                global = new globals();
 
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<addSalary>();
 
-                
-                // List<addSalary> myList = (from x in conn.Table<addSalary>().Where(x => x.date == currentDate) select x).ToList();
+                    var now = DateTime.Now;
+                    var startOfMonth = new DateTime(now.Year, 08, 25);
 
-                var now = DateTime.Now;
-                var startOfMonth = new DateTime(now.Year, 08, 25);
-
-                //var updateMoney = conn.ExecuteScalar<addSalary>("UPDATE Money Set date  = '8/26/2020 1:14:10 PM' where id = 44");
-
-                var foreign = conn.Query<addSalary>("SELECT id, mySalary, mySource, date FROM Money Where date BETWEEN '"+ startOfMonth + "' AND '"+ now + "'");
-                
-                MyListView.ItemsSource = foreign;
-                //MyListView.ItemsSource = foreign;
-                Total.Text = global.getTotal().ToString();
-                //}
+                    var foreign = conn.Query<addSalary>("SELECT id, mySalary, mySource, date FROM Money Where date BETWEEN '" + startOfMonth + "' AND '" + now + "'");
+                    
+                    MyListView.ItemsSource = foreign;
+                    Total.Text = global.getTotal().ToString();
+                    //}
+                }
             }
+            catch(Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+            
            
         }
 
@@ -128,72 +134,98 @@ namespace MoneyApp
            
         }
 
-        private void StackLayout_Focused(object sender, FocusEventArgs e)
+        private async void StackLayout_Focused(object sender, FocusEventArgs e)
         {
-            addSalary add = new addSalary()
+            try
             {
-                mySalary = Salary.Text,
-                mySource = source.Text,
-                date = DateTime.Now.ToString()
-            };
+                addSalary add = new addSalary()
+                {
+                    mySalary = Salary.Text,
+                    mySource = source.Text,
+                    date = DateTime.Now.ToString()
+                };
+            }
+            catch(Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+            
         }
 
-        private void EvetClicked(object sender, SelectedItemChangedEventArgs e)
+        private async void EvetClicked(object sender, SelectedItemChangedEventArgs e)
         {
-            var obj = (addSalary)e.SelectedItem;
-            ide = Convert.ToInt32(obj.id);
-            oldAmount = double.Parse(obj.mySalary);
-            Salary.Text = obj.mySalary;
-            source.Text = obj.mySource;
+            try
+            {
+                var obj = (addSalary)e.SelectedItem;
+                ide = Convert.ToInt32(obj.id);
+                oldAmount = double.Parse(obj.mySalary);
+                Salary.Text = obj.mySalary;
+                source.Text = obj.mySource;
+            }
+            catch(Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+            
         }
 
         private async void ButtonEdit_Clicked(object sender, EventArgs e)
         {
-            if(String.IsNullOrEmpty(Salary.Text)|| String.IsNullOrEmpty(source.Text))
-            {
-                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
-            }
-            else
-            {
-                var result =
-                  await DisplayAlert("Confirmation",
-                  "Are you sure? ",
-                  "OK", "Cancel");
-                if (result == true && !Salary.Text.Equals("") && !source.Text.Equals(""))
+            try {
+                if (String.IsNullOrEmpty(Salary.Text) || String.IsNullOrEmpty(source.Text))
                 {
-                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                    {
-                        conn.CreateTable<addSalary>();
-                        var updateMarks = conn.ExecuteScalar<addSalary>("UPDATE Money Set mySalary  = ? , mySource = ? WHERE id = ?", Salary.Text, source.Text, ide);
-
-                        UpdateAmount();
-
-                        total = 0;
-                        global = new globals();
-                        total = UpdateAmount();
-                        var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
-                        Salary.Text = "";
-                        source.Text = "";
-                    }
+                    await DisplayAlert("Alert", "Please enter all fields? ", "OK");
                 }
-                OnAppearing();
+                else
+                {
+                    var result =
+                      await DisplayAlert("Confirmation",
+                      "Are you sure? ",
+                      "OK", "Cancel");
+                    if (result == true && !Salary.Text.Equals("") && !source.Text.Equals(""))
+                    {
+                        using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                        {
+                            conn.CreateTable<addSalary>();
+                            var updateMarks = conn.ExecuteScalar<addSalary>("UPDATE Money Set mySalary  = ? , mySource = ? WHERE id = ?", Salary.Text, source.Text, ide);
+
+                            UpdateAmount();
+
+                            total = 0;
+                            global = new globals();
+                            total = UpdateAmount();
+                            var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
+                            Salary.Text = "";
+                            source.Text = "";
+                        }
+                    }
+                    OnAppearing();
+                }
             }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+
+
+            
                 
         }
 
         private async void ButtonDelete_Clicked(object sender, EventArgs e)
         {
+            try {
 
-            if (String.IsNullOrEmpty(Salary.Text) || String.IsNullOrEmpty(source.Text))
-            {
-                await DisplayAlert("Alert", "Please select record to delete? ", "OK");
-            }
-            else
-            {
-                var result =
-                  await DisplayAlert("Confirmation",
-                  "Are you sure?",
-                  "OK", "Cancel");
+                if (String.IsNullOrEmpty(Salary.Text) || String.IsNullOrEmpty(source.Text))
+                {
+                    await DisplayAlert("Alert", "Please select record to delete? ", "OK");
+                }
+                else
+                {
+                    var result =
+                      await DisplayAlert("Confirmation",
+                      "Are you sure?",
+                      "OK", "Cancel");
                     if (result == true && !Salary.Text.Equals("") && !source.Text.Equals(""))
                     {
                         using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
@@ -203,10 +235,10 @@ namespace MoneyApp
                             //conn.Execute("DELETE FROM Money");
                             var updateMarks = conn.ExecuteScalar<addSalary>("DELETE FROM Money WHERE id = ?", ide);
 
-                           
 
 
-                        total = 0;
+
+                            total = 0;
                             global = new globals();
                             total = UpdateAmountOnDelete();
                             conn.Execute("DELETE FROM ActiveMoney");
@@ -215,47 +247,69 @@ namespace MoneyApp
                             source.Text = "";
                         }
                     }
-                OnAppearing();
+                    OnAppearing();
+                }
             }
+            catch(Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+            
 
                 
         }
 
         private double UpdateAmount()
         {
-            
-            var newAmount = double.Parse(Salary.Text);
             var updateAmount = 0.0;
-            var difference = 0.0;
-            total = 0;
-            global = new globals();
-            
-
-            if (newAmount < oldAmount)
+            try
             {
-                difference = oldAmount - newAmount;
-                updateAmount = global.calculateMinusOnTotal(difference);
-              
+                var newAmount = double.Parse(Salary.Text);
+                
+                var difference = 0.0;
+                total = 0;
+                global = new globals();
+
+
+                if (newAmount < oldAmount)
+                {
+                    difference = oldAmount - newAmount;
+                    updateAmount = global.calculateMinusOnTotal(difference);
+
+                }
+                else
+                {
+                    difference = newAmount - oldAmount;
+                    updateAmount = global.calculateTotal(difference);
+                }
+
+
+                
             }
-            else
+            catch(Exception ex)
             {
-                difference =  newAmount - oldAmount;
-                updateAmount = global.calculateTotal(difference);
+               
             }
-
-
             return updateAmount;
+
         }
 
         private double UpdateAmountOnDelete()
         {
-
-            var newAmount = double.Parse(Salary.Text);
             var updateAmount = 0.0;
-            
+            try
+            {
+                var newAmount = double.Parse(Salary.Text);
+               
+                global = new globals();
+                updateAmount = global.calculateMinusOnTotal(newAmount);
+            }
+            catch(Exception ex)
+            {
+                
+            }
 
-            global = new globals();
-            updateAmount = global.calculateMinusOnTotal(newAmount);
+            
 
             return updateAmount;
         }

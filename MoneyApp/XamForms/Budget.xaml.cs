@@ -21,200 +21,220 @@ namespace MoneyApp.XamForms
 
         private async void ButtonAddBudget_Clicked(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+            try
             {
-                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
-            }
-            else
-            {
-
-                var fkey = getForeighKey();
-                BudgetCls add = new BudgetCls()
+                if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
                 {
-                    item = Item.Text,
-                    amount = double.Parse(Amount.Text),
-                    addedAt = DateTime.Now.ToString(),
-                    updatedAt = DateTime.Now.ToString()
+                    await DisplayAlert("Alert", "Please enter all fields? ", "OK");
+                }
+                else
+                {
 
-                };
+                    
+                    BudgetCls add = new BudgetCls()
+                    {
+                        item = Item.Text,
+                        amount = double.Parse(Amount.Text),
+                        addedAt = DateTime.Now.ToString(),
+                        updatedAt = DateTime.Now.ToString()
+
+                    };
+
+                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                    {
+                        conn.CreateTable<BudgetCls>();
+                        int rows = conn.Insert(add);
+                        Item.Text = "";
+                        Amount.Text = "";
+                        OnAppearing();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+        }
+
+        protected override async void OnAppearing()
+        {
+            try
+            {
+
+                base.OnAppearing();
 
                 using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                 {
                     conn.CreateTable<BudgetCls>();
-                    int rows = conn.Insert(add);
-                    Item.Text = "";
-                    Amount.Text = "";
-                    OnAppearing();
-                }
-            }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-            {
-                conn.CreateTable<BudgetCls>();
-                var salarie = conn.Table<BudgetCls>().ToList();
-                MyListView.ItemsSource = salarie;
-
-            }
-
-            total.Text = getBudgetTotal().ToString();
-        }
-
-        public string getForeighKey()
-        {
-            List<addSalary> intList = new List<addSalary>();
-            var Fkey = "";
-
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-            {
-                var foreign = conn.Query<addSalary>("SELECT id FROM Money WHERE isActive = true");
-
-                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
-
-                var stocksStartingWithA = conn.Query<addSalary>("SELECT * FROM Money WHERE isActive = true");
-
-                //stocksStartingWithA = conn.Query<addSalary>("SELECT * FROM Money WHERE isActive = false");
-
-                foreach (var fK in foreign)
-                {
-
-                    Fkey = fK.id.ToString();
+                    var salarie = conn.Table<BudgetCls>().ToList();
+                    MyListView.ItemsSource = salarie;
 
                 }
 
+                total.Text = getBudgetTotal().ToString();
             }
-
-            return Fkey;
-            /*
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            catch (Exception ex)
             {
-                conn.CreateTable<BudgetCls>();
-                var salarie = conn.Table<BudgetCls>().ToList();
-                MyListView.ItemsSource = salarie;
-
-                foreach (var mysalary in salarie)
-                {
-                    Total += int.Parse(mysalary.amount);
-                }
-
+                await DisplayAlert("Alert", ex.ToString(), "OK");
             }
-            total.Text += Total.ToString();*/
         }
+
+        
 
         private async void ButtonEdit_Clicked(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+            try
             {
-                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
-            }
-            else
-            {
-                var result =
-                  await DisplayAlert("Confirmation",
-                  "Are you sure? ",
-                  "OK", "Cancel");
-                if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
+                if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
                 {
-                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                    {
-                        conn.CreateTable<BudgetCls>();
-                        var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
-
-
-                        Item.Text = "";
-                        Amount.Text = "";
-                    }
+                    await DisplayAlert("Alert", "Please enter all fields? ", "OK");
                 }
+                else
+                {
+                    var result =
+                      await DisplayAlert("Confirmation",
+                      "Are you sure? ",
+                      "OK", "Cancel");
+                    if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
+                    {
+                        using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                        {
+                            conn.CreateTable<BudgetCls>();
+                            var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
 
-                OnAppearing();
+
+                            Item.Text = "";
+                            Amount.Text = "";
+                        }
+                    }
+
+                    OnAppearing();
+                }
             }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+
         }
 
         private async void ButtonDelete_Clicked(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+            try
             {
-                await DisplayAlert("Alert", "Please select record to delete? ", "OK");
-            }
-            else
-            {
-                var result =
-                  await DisplayAlert("Confirmation",
-                  "Are you sure?",
-                  "OK", "Cancel");
-                if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
+                if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
                 {
-                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                    {
-
-                        conn.CreateTable<BudgetCls>();
-                        var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget WHERE id = ?", ide);
-
-                        Item.Text = "";
-                        Amount.Text = "";
-                    }
+                    await DisplayAlert("Alert", "Please select record to delete? ", "OK");
                 }
-                OnAppearing();
+                else
+                {
+                    var result =
+                      await DisplayAlert("Confirmation",
+                      "Are you sure?",
+                      "OK", "Cancel");
+                    if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
+                    {
+                        using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                        {
+
+                            conn.CreateTable<BudgetCls>();
+                            var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget WHERE id = ?", ide);
+
+                            Item.Text = "";
+                            Amount.Text = "";
+                        }
+                    }
+                    OnAppearing();
+                }
             }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+
         }
 
-        private void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        private async void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            var obj = (BudgetCls)e.SelectedItem;
-            ide = Convert.ToInt32(obj.id);
+            try
+            {
+                var obj = (BudgetCls)e.SelectedItem;
+                ide = Convert.ToInt32(obj.id);
 
-            Item.Text = obj.item;
-            Amount.Text = obj.amount.ToString();
+                Item.Text = obj.item;
+                Amount.Text = obj.amount.ToString();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+
         }
 
         private double getBudgetTotal()
         {
-
             List<BudgetCls> intList = new List<BudgetCls>();
             var Fkey = 0.0;
 
-            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            try
             {
-                conn.CreateTable<BudgetCls>();
-
-                var foreign = conn.Query<BudgetCls>("SELECT amount FROM Budget");
-
-                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
-
-
-
-                foreach (var fK in foreign)
+                
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                 {
-                    if (!string.IsNullOrEmpty(fK.amount.ToString()))
+                    conn.CreateTable<BudgetCls>();
+
+                    var foreign = conn.Query<BudgetCls>("SELECT amount FROM Budget");
+
+                    foreach (var fK in foreign)
                     {
-                        Fkey += fK.amount;
+                        if (!string.IsNullOrEmpty(fK.amount.ToString()))
+                        {
+                            Fkey += fK.amount;
+                        }
+
                     }
 
                 }
-
+            }
+            catch (Exception ex)
+            {
+                
             }
 
             return Fkey;
         }
 
-        private double UpdateAmountOnDelete()
+        private  double UpdateAmountOnDeleteAsync()
         {
-
-            var newAmount = double.Parse(Amount.Text);
             double updateAmount = 0.0;
 
-            global = new globals();
-            updateAmount = global.budgetMinusOnTotal(newAmount);
+            try
+            {
+                var newAmount = double.Parse(Amount.Text);
+                
+
+                global = new globals();
+                updateAmount = global.budgetMinusOnTotal(newAmount);
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
 
             return updateAmount;
         }
 
         private async void StartBudget_Clicked(object sender, EventArgs e)
         {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
             var result =
                  await DisplayAlert("Confirmation",
                  "Are you sure?",

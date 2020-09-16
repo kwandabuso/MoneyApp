@@ -7,9 +7,10 @@
              x:Class="MoneyApp.XamForms.Spend">
 
     <StackLayout Margin="20">
+        
         <StackLayout>
             <Entry Placeholder="Please enter ITEM" x:Name="Item"/>
-            <Entry Placeholder="Please enter Amount" x:Name="Amount"/>
+            <Entry Placeholder="Please enter Amount" x:Name="Amount" Keyboard="Numeric"/>
 
         </StackLayout>
 

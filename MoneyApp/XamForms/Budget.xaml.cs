@@ -44,11 +44,12 @@ namespace MoneyApp.XamForms
                     {
                         conn.CreateTable<BudgetCls>();
                         int rows = conn.Insert(add);
-                        Item.Text = "";
-                        Amount.Text = "";
-                        OnAppearing();
+                       
                     }
                 }
+                Item.Text = "";
+                Amount.Text = "";
+                OnAppearing();
             }
             catch (Exception ex)
             {
@@ -79,8 +80,6 @@ namespace MoneyApp.XamForms
             }
         }
 
-        
-
         private async void ButtonEdit_Clicked(object sender, EventArgs e)
         {
             try
@@ -103,11 +102,10 @@ namespace MoneyApp.XamForms
                             var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
 
 
-                            Item.Text = "";
-                            Amount.Text = "";
                         }
                     }
-
+                    Item.Text = "";
+                    Amount.Text = "";
                     OnAppearing();
                 }
             }
@@ -140,10 +138,11 @@ namespace MoneyApp.XamForms
                             conn.CreateTable<BudgetCls>();
                             var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget WHERE id = ?", ide);
 
-                            Item.Text = "";
-                            Amount.Text = "";
+                           
                         }
                     }
+                    Item.Text = "";
+                    Amount.Text = "";
                     OnAppearing();
                 }
             }
@@ -255,7 +254,25 @@ namespace MoneyApp.XamForms
             }
         }
 
-        
+        private async void clearAll_Clicked(object sender, EventArgs e)
+        {
+            var result =
+             await DisplayAlert("Confirmation",
+             "Are you sure?",
+             "OK", "Cancel");
+
+            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            {
+
+                conn.CreateTable<BudgetCls>();
+                var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget", ide);
+
+
+            }
+            Item.Text = "";
+            Amount.Text = "";
+            OnAppearing();
+        }
     }
 }
     

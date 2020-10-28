@@ -18,6 +18,7 @@
             <Button x:Name="Submit" Text="SUBMIT" Clicked="Button_Clicked"/>
             <Button x:Name="Edit" Text="EDIT" Clicked="Edit_Clicked"/>
             <Button x:Name="delete" Text="DELETE" Clicked="delete_Clicked"/>
+            <Button x:Name="clearall" Text="Clear all" Clicked="clearall_Clicked"/>
         </StackLayout>
 
         <StackLayout Orientation="Horizontal">
@@ -30,7 +31,7 @@
         <StackLayout>
             <ListView x:Name="MyListView" ItemSelected="EvetClicked" ItemsSource="{Binding foreign}">
                 <ListView.Header>
-                    <Grid BackgroundColor="Aquamarine">
+                    <Grid>
                         <Grid.ColumnDefinitions >
                             <ColumnDefinition Width="5*" />
                             <ColumnDefinition Width="5*"/>

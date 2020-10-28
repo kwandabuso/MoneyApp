@@ -114,7 +114,7 @@ namespace MoneyApp
                     var now = DateTime.Now;
                     var startOfMonth = new DateTime(now.Year, 08, 25);
 
-                    var foreign = conn.Query<addSalary>("SELECT id, mySalary, mySource, date FROM Money Where date BETWEEN '" + startOfMonth + "' AND '" + now + "'");
+                    var foreign = conn.Query<addSalary>("SELECT id, mySalary, mySource, date FROM Money ");
                     
                     MyListView.ItemsSource = foreign;
                     Total.Text = global.getTotal().ToString();
@@ -312,6 +312,26 @@ namespace MoneyApp
             
 
             return updateAmount;
+        }
+
+        private async void clearAll_Clicked(object sender, EventArgs e)
+        {
+
+            var result =
+              await DisplayAlert("Confirmation",
+              "Are you sure?",
+              "OK", "Cancel");
+
+            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            {
+
+                conn.CreateTable<addSalary>();
+                var updateMarks = conn.ExecuteScalar<addSalary>("DELETE FROM Money", ide);
+
+               var  deleteStuff = conn.ExecuteScalar<ActiveMoney>("DELETE FROM ActiveMoney", ide);
+                
+            }
+            OnAppearing();
         }
     }
 }

@@ -178,5 +178,25 @@ namespace MoneyApp.XamForms
                 }
             }
         }
+
+        private async void clearall_Clicked(object sender, EventArgs e)
+        {
+           
+                var result =
+                  await DisplayAlert("Confirmation",
+                  "Are you sure?",
+                  "OK", "Cancel");
+                
+                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                    {
+
+                        conn.CreateTable<spendMoney>();
+                        var updateMarks = conn.ExecuteScalar<spendMoney>("DELETE FROM Spend", ide);
+
+                        
+                    }
+                OnAppearing();
+            
+        }
     }
 }

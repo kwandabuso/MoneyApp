@@ -166,10 +166,6 @@ namespace MoneyApp.Classes
                 conn.CreateTable<ActiveMoney>();
                 var foreign = conn.Query<ActiveMoney>("SELECT mySalary FROM ActiveMoney");
 
-                
-
-
-
                 foreach (var fK in foreign)
                 {
                     if (!string.IsNullOrEmpty(fK.mySalary.ToString()))

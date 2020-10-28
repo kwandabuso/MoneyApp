@@ -14,6 +14,7 @@
             <Button x:Name="ButtonAddBudget" Text="Submit" Clicked="ButtonAddBudget_Clicked"/>
             <Button x:Name="ButtonEdit" Text="Edit" Clicked="ButtonEdit_Clicked"/>
             <Button x:Name="ButtonDelete" Text="Delete" Clicked="ButtonDelete_Clicked"/>
+            <Button x:Name="clearAll" Text="Clear All" Clicked="clearAll_Clicked"/>
         </StackLayout>
 
         <StackLayout Orientation="Horizontal">
@@ -50,8 +51,8 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text = "{Binding item}" FontSize="Medium" Grid.Column="0" BackgroundColor="Aquamarine"/>
-                                <Label Text = "{Binding amount}" FontSize="Medium" Grid.Column="1" BackgroundColor="Chartreuse"/>
+                                <Label Text = "{Binding item}" FontSize="Medium" Grid.Column="0"/>
+                                <Label Text = "{Binding amount}" FontSize="Medium" Grid.Column="1"/>
 
                             </Grid>
                         </ViewCell>

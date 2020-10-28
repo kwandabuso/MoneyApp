@@ -26,6 +26,7 @@
             <Button x:Name="ButtonSalary" Text="Submit" Clicked="ButtonSalary_Clicked"/>
             <Button x:Name="ButtonEdit" Text="Edit" Clicked="ButtonEdit_Clicked"/>
             <Button x:Name="ButtonDelete" Text="Delete" Clicked="ButtonDelete_Clicked"/>
+            <Button x:Name="clearAll" Text="clear all" Clicked="clearAll_Clicked"/>
 
         </StackLayout >
 

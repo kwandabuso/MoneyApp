@@ -1,0 +1,1 @@
+﻿DB path C:\Users\Kwanda Buso\Documents\AndroidStudio\DeviceExplorer\pixel_2_pie_9_0_-_api_28 [emulator-5554]\data\data\com.companyname.moneyapp\files

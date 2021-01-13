@@ -1,10 +1,12 @@
 ﻿using SQLite;
+using System;
 using System.Collections.Generic;
 
 namespace MoneyApp.Classes
 {
-    class globals
+    public class globals
     {
+
         public double calculateTotal(double oldAmount)
         {
             List<ActiveMoney> intList = new List<ActiveMoney>();
@@ -199,5 +201,42 @@ namespace MoneyApp.Classes
                 
             return total;
         }
+
+        public List<addSalary> GetMonthlyIncomeList()
+        {
+            List<addSalary> monthlyIncomeList = new List<addSalary>();
+
+             try
+            {
+                
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<addSalary>();
+                    var sql = "";
+                    var now = DateTime.Now;
+                    var startOfMonth = new DateTime(now.Year, now.Month,28);
+                    var startOfLastMonth = new DateTime(now.Year, now.Month-1, 28);
+                    var DaysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                    var endOfTheMonth = new DateTime(now.Year, now.Month, DaysInMonth);
+
+                    if((now.Day >= 28) && (now.Day <= DaysInMonth))
+                    {
+                        sql = "SELECT id, mySalary, mySource, date FROM Money WHERE date BETWEEN '" + startOfMonth + "' AND '" + endOfTheMonth + "'";
+                    }
+                   else
+                    {
+                        sql = "SELECT id, mySalary, mySource, date FROM Money WHERE date BETWEEN '" + startOfLastMonth + "' AND '" + endOfTheMonth + "'";
+                    }
+
+                    return monthlyIncomeList = conn.Query<addSalary>(sql);
+
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return monthlyIncomeList;
+        }
+
     }
 }

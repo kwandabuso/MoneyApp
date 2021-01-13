@@ -5,8 +5,8 @@ using System.Text;
 
 namespace MoneyApp.Classes
 {
-    [Table("Money")]
-   public class addSalary
+    [Table("Moneytest")]
+    class AddMySalary
     {
 
       

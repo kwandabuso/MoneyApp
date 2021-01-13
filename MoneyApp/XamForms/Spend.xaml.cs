@@ -23,33 +23,46 @@ namespace MoneyApp.XamForms
 
         private async void Button_Clicked(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+            try
             {
-                await DisplayAlert("Alert", "Please enter all fields? ", "OK");
-            }
-            else
-            {
-                spendMoney add = new spendMoney()
+                if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
                 {
-                    item = Item.Text,
-                    amount = double.Parse(Amount.Text),
-                    addedAt = DateTime.Now.ToString(),
-                    updatedAt = DateTime.Now.ToString()
-
-                };
-
-                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                    await DisplayAlert("Alert", "Please enter all fields? ", "OK");
+                }
+                else
                 {
-                    conn.CreateTable<spendMoney>();
-                    int rows = conn.Insert(add);
+                    spendMoney add = new spendMoney()
+                    {
+                        item = Item.Text,
+                        amount = double.Parse(Amount.Text),
+                        addedAt = DateTime.Now.ToString(),
+                        updatedAt = DateTime.Now.ToString()
 
-                    deductFromTotal();
+                    };
+
+                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                    {
+                        conn.CreateTable<spendMoney>();
+                        int rows = conn.Insert(add);
+
+                        deductFromTotal();
 
 
 
-                    OnAppearing();
+                        OnAppearing();
+                    }
                 }
             }
+            catch (FormatException)
+            {
+                await DisplayAlert("Alert", "please  enter a correct number", "OK");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
+
+
         }
       
         protected override void OnAppearing()

@@ -21,6 +21,11 @@ namespace MoneyApp.XamForms
 
         private async void ButtonAddBudget_Clicked(object sender, EventArgs e)
         {
+
+            //TODO: BUDGET confirm if you want to add budget amount
+            //TODO: display this month budget Items
+
+
             try
             {
                 if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
@@ -51,10 +56,15 @@ namespace MoneyApp.XamForms
                 Amount.Text = "";
                 OnAppearing();
             }
+            catch (FormatException)
+            {
+                await DisplayAlert("Alert", "please  enter a correct number", "OK");
+            }
             catch (Exception ex)
             {
                 await DisplayAlert("Alert", ex.ToString(), "OK");
             }
+            
         }
 
         protected override async void OnAppearing()
@@ -108,6 +118,10 @@ namespace MoneyApp.XamForms
                     Amount.Text = "";
                     OnAppearing();
                 }
+            }
+            catch (FormatException)
+            {
+                await DisplayAlert("Alert", "please  enter a correct number", "OK");
             }
             catch (Exception ex)
             {

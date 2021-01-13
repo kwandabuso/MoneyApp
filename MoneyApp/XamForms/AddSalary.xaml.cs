@@ -93,7 +93,12 @@ namespace MoneyApp
                     }
                 }
             }
-            catch(Exception ex)
+            catch (FormatException)
+            {
+                await DisplayAlert("Alert", "please  enter a correct number", "OK");
+            }
+
+            catch (Exception ex)
             {
                 await DisplayAlert("Alert", ex.ToString() , "OK");
             }
@@ -106,17 +111,16 @@ namespace MoneyApp
             {
                 base.OnAppearing();
                 global = new globals();
-
                 using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                 {
                     conn.CreateTable<addSalary>();
 
-                    var now = DateTime.Now;
-                    var startOfMonth = new DateTime(now.Year, 08, 25);
+                    //var now = DateTime.Now;
+                    //var startOfMonth = new DateTime(now.Year, 08, 25);
 
-                    var foreign = conn.Query<addSalary>("SELECT id, mySalary, mySource, date FROM Money ");
+                  //  var foreign = conn.Query<addSalary>("SELECT id, mySalary, mySource, date FROM Money ");
                     
-                    MyListView.ItemsSource = foreign;
+                    MyListView.ItemsSource = global.GetMonthlyIncomeList(); ;
                     Total.Text = global.getTotal().ToString();
                     //}
                 }
@@ -171,7 +175,11 @@ namespace MoneyApp
 
         private async void ButtonEdit_Clicked(object sender, EventArgs e)
         {
-            try {
+              
+            try
+            {
+                
+
                 if (String.IsNullOrEmpty(Salary.Text) || String.IsNullOrEmpty(source.Text))
                 {
                     await DisplayAlert("Alert", "Please enter all fields? ", "OK");
@@ -202,6 +210,10 @@ namespace MoneyApp
                     OnAppearing();
                 }
             }
+            catch (FormatException)
+            {
+                await DisplayAlert("Alert", "please  enter a correct number", "OK");
+            }
             catch (Exception ex)
             {
                 await DisplayAlert("Alert", ex.ToString(), "OK");
@@ -215,6 +227,7 @@ namespace MoneyApp
         private async void ButtonDelete_Clicked(object sender, EventArgs e)
         {
             try {
+
 
                 if (String.IsNullOrEmpty(Salary.Text) || String.IsNullOrEmpty(source.Text))
                 {
@@ -316,7 +329,6 @@ namespace MoneyApp
 
         private async void clearAll_Clicked(object sender, EventArgs e)
         {
-
             var result =
               await DisplayAlert("Confirmation",
               "Are you sure?",

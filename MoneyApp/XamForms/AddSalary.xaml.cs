@@ -17,6 +17,8 @@ namespace MoneyApp
         globals global;
         double total;
         double oldAmount;
+        DateTime dt = DateTime.Now;
+        string dateString = "";
         public AddSalary()
         {
             InitializeComponent();
@@ -26,6 +28,9 @@ namespace MoneyApp
         {
             try
             {
+                DateTime dt = DateTime.Now; // Or your date, as long as it is in DateTime format
+                dateString = dt.ToString("yyyy-MM-dd HH:mm:ss.FFF");
+
                 if (String.IsNullOrEmpty(Salary.Text) || String.IsNullOrEmpty(source.Text))
                 {
                     await DisplayAlert("Alert", "Please enter all fields? ", "OK");
@@ -43,7 +48,7 @@ namespace MoneyApp
 
                             mySalary = Salary.Text,
                             mySource = source.Text,
-                            date = DateTime.Now.ToString()
+                            date = dateString
                         };
 
                         using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
@@ -146,7 +151,7 @@ namespace MoneyApp
                 {
                     mySalary = Salary.Text,
                     mySource = source.Text,
-                    date = DateTime.Now.ToString()
+                    date = dateString
                 };
             }
             catch(Exception ex)

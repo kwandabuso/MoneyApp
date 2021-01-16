@@ -11,13 +11,18 @@ namespace MoneyApp.XamForms
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Spend : ContentPage
     {
-        int ide;
+        int spendItemId;
         globals global;
         double total;
         double totalBudget;
         double oldAmount;
+        string dateString = "";
+
         public Spend()
         {
+           
+            DateTime dt = DateTime.Now;
+            dateString = dt.ToString("yyyy-MM-dd HH:mm:ss.FFF");
             InitializeComponent();
         }
 
@@ -25,7 +30,7 @@ namespace MoneyApp.XamForms
         {
             try
             {
-                if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+                if (drpBudgetItems.SelectedIndex ==-1    || String.IsNullOrEmpty(Amount.Text))
                 {
                     await DisplayAlert("Alert", "Please enter all fields? ", "OK");
                 }
@@ -33,10 +38,12 @@ namespace MoneyApp.XamForms
                 {
                     spendMoney add = new spendMoney()
                     {
-                        item = Item.Text,
+                        item = drpBudgetItems.SelectedItem.ToString(),
                         amount = double.Parse(Amount.Text),
-                        addedAt = DateTime.Now.ToString(),
-                        updatedAt = DateTime.Now.ToString()
+
+
+                        addedAt = dateString.ToString(),
+                        updatedAt = dateString.ToString()
 
                     };
 
@@ -74,15 +81,15 @@ namespace MoneyApp.XamForms
                 global = new globals();
                 conn.CreateTable<spendMoney>();
                 var salarie = conn.Table<spendMoney>().ToList();
-                MyListView.ItemsSource = salarie;
-
+                MyListView.ItemsSource = global.getMonthlyItems();
+                drpBudgetItems.ItemsSource = global.getMonthlySpendItems();
                 TotalSpend.Text = global.getSavingsTotal().ToString();
             }
         }
 
         private async void Edit_Clicked(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+            if (drpBudgetItems.SelectedIndex == -1 || String.IsNullOrEmpty(Amount.Text))
             {
                 await DisplayAlert("Alert", "Please enter all fields? ", "OK");
             }
@@ -92,21 +99,21 @@ namespace MoneyApp.XamForms
                   await DisplayAlert("Confirmation",
                   "Are you sure? ",
                   "OK", "Cancel");
-                if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
+                if (result == true && drpBudgetItems.SelectedIndex != -1 && !Amount.Text.Equals(""))
                 {
                     
 
                     using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                     {
                         conn.CreateTable<spendMoney>();
-                        var updateMarks = conn.ExecuteScalar<spendMoney>("UPDATE Spend Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
+                        var updateMarks = conn.ExecuteScalar<spendMoney>("UPDATE Spend Set item  = ? , amount = ? , updatedAt = ? WHERE , id = ?", drpBudgetItems.SelectedItem, Amount.Text, dateString.ToString(), spendItemId);
 
                         total = 0;
                         global = new globals();
                         total = global.calculateDifferenceOnTotal(oldAmount,double.Parse(Amount.Text));
 
                         var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
-                        Item.Text = "";
+                        drpBudgetItems.SelectedIndex = -1;
                         Amount.Text = "";
                     }
                 }
@@ -117,7 +124,7 @@ namespace MoneyApp.XamForms
 
         private async void delete_Clicked(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(Item.Text) || String.IsNullOrEmpty(Amount.Text))
+            if (drpBudgetItems.SelectedIndex == -1 || String.IsNullOrEmpty(Amount.Text))
             {
                 await DisplayAlert("Alert", "Please select record to delete? ", "OK");
             }
@@ -127,19 +134,19 @@ namespace MoneyApp.XamForms
                   await DisplayAlert("Confirmation",
                   "Are you sure?",
                   "OK", "Cancel");
-                if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
+                if (result == true && drpBudgetItems.SelectedIndex == -1 && !Amount.Text.Equals(""))
                 {
                     using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                     {
 
                         conn.CreateTable<addSalary>();
-                        var updateMarks = conn.ExecuteScalar<spendMoney>("DELETE FROM Spend WHERE id = ?", ide);
+                        var updateMarks = conn.ExecuteScalar<spendMoney>("DELETE FROM Spend WHERE id = ?", spendItemId);
 
                         total = 0;
                         global = new globals();
                         total = global.calculateTotal(oldAmount);
                         var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
-                        Item.Text = "";
+                        drpBudgetItems.SelectedIndex = -1;
                         Amount.Text = "";
                     }
                 }
@@ -151,8 +158,8 @@ namespace MoneyApp.XamForms
         private void EvetClicked(object sender, SelectedItemChangedEventArgs e)
         {
             var obj = (spendMoney)e.SelectedItem;
-            ide = Convert.ToInt32(obj.id);
-            Item.Text = obj.item;
+            spendItemId = obj.id;
+            drpBudgetItems.SelectedItem = obj.item;
             Amount.Text = obj.amount.ToString();
 
             oldAmount =double.Parse(Amount.Text);
@@ -165,7 +172,7 @@ namespace MoneyApp.XamForms
             var updateAmount = 0.0;
 
             global = new globals();
-            updateAmount = global.calculateTotal(global.getSavingsTotalById(ide.ToString()));
+            updateAmount = global.calculateTotal(global.getSavingsTotalById(spendItemId.ToString()));
 
             return updateAmount;
         }
@@ -204,7 +211,7 @@ namespace MoneyApp.XamForms
                     {
 
                         conn.CreateTable<spendMoney>();
-                        var updateMarks = conn.ExecuteScalar<spendMoney>("DELETE FROM Spend", ide);
+                        var updateMarks = conn.ExecuteScalar<spendMoney>("DELETE FROM Spend", spendItemId);
 
                         
                     }

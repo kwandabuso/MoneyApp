@@ -7,7 +7,7 @@ using System.Text;
 namespace MoneyApp.Classes
 {
     [Table("Spend")]
-    class spendMoney
+    public class spendMoney
     {
         [PrimaryKey, AutoIncrement]
         public int id

@@ -29,7 +29,7 @@ namespace MoneyApp.Classes
             set;
         }
 
-        public string date
+        public DateTime date
         {
             get;
             set;

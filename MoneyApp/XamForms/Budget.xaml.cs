@@ -23,6 +23,7 @@ namespace MoneyApp.XamForms
         {
 
             //TODO: BUDGET confirm if you want to add budget amount
+
             //TODO: display this month budget Items
 
 
@@ -34,27 +35,36 @@ namespace MoneyApp.XamForms
                 }
                 else
                 {
-
-                    
-                    BudgetCls add = new BudgetCls()
+                    var result =
+                      await DisplayAlert("Confirmation",
+                      "Are you sure? ",
+                      "OK", "Cancel");
+                    if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
                     {
-                        item = Item.Text,
-                        amount = double.Parse(Amount.Text),
-                        addedAt = DateTime.Now.ToString(),
-                        updatedAt = DateTime.Now.ToString()
+                        BudgetCls add = new BudgetCls()
+                        {
+                            item = Item.Text,
+                            amount = double.Parse(Amount.Text),
+                            addedAt = DateTime.Now.ToString(),
+                            updatedAt = DateTime.Now.ToString(),
+                            isActive = true
 
-                    };
+                        };
 
-                    using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                    {
-                        conn.CreateTable<BudgetCls>();
-                        int rows = conn.Insert(add);
-                       
+                        using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                        {
+                            conn.CreateTable<BudgetCls>();
+                            int rows = conn.Insert(add);
+
+                        }
+                        Item.Text = "";
+                        Amount.Text = "";
+                        OnAppearing();
                     }
+
+                       
                 }
-                Item.Text = "";
-                Amount.Text = "";
-                OnAppearing();
+                
             }
             catch (FormatException)
             {
@@ -71,6 +81,7 @@ namespace MoneyApp.XamForms
         {
             try
             {
+                global = new globals();
 
                 base.OnAppearing();
 
@@ -78,7 +89,10 @@ namespace MoneyApp.XamForms
                 {
                     conn.CreateTable<BudgetCls>();
                     var salarie = conn.Table<BudgetCls>().ToList();
-                    MyListView.ItemsSource = salarie;
+
+                    List<BudgetCls> intList = new List<BudgetCls>();
+                    intList = global.getMonthlyBudgetItems();
+                    MyListView.ItemsSource = global.getMonthlyBudgetItems();
 
                 }
 
@@ -196,7 +210,7 @@ namespace MoneyApp.XamForms
                 {
                     conn.CreateTable<BudgetCls>();
 
-                    var foreign = conn.Query<BudgetCls>("SELECT amount FROM Budget");
+                    var foreign = conn.Query<BudgetCls>("SELECT amount FROM Budget WHERE isActive = 1");
 
                     foreach (var fK in foreign)
                     {
@@ -217,7 +231,8 @@ namespace MoneyApp.XamForms
             return Fkey;
         }
 
-        private  double UpdateAmountOnDeleteAsync()
+        //TODO: remove this code
+        private double UpdateAmountOnDeleteAsync()
         {
             double updateAmount = 0.0;
 
@@ -237,7 +252,8 @@ namespace MoneyApp.XamForms
 
             return updateAmount;
         }
-
+    
+        //TODO: remove this code
         private async void StartBudget_Clicked(object sender, EventArgs e)
         {
             try

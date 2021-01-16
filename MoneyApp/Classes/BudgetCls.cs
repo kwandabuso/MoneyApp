@@ -7,7 +7,7 @@ using System.Text;
 namespace MoneyApp.Classes
 {
     [Table("Budget")]
-    class BudgetCls
+    public class BudgetCls
     {
        
             [PrimaryKey, AutoIncrement]
@@ -39,6 +39,13 @@ namespace MoneyApp.Classes
                 get;
                 set;
             }
+
+        public bool isActive
+        {
+            get;
+            set;
+        }
+
         
     }
 }

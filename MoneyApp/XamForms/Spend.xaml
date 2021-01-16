@@ -9,7 +9,11 @@
     <StackLayout Margin="20">
         
         <StackLayout>
-            <Entry Placeholder="Please enter ITEM" x:Name="Item"/>
+            <Picker Title="PLEASE SELECT BUDGET ITEM" x:Name="drpBudgetItems"
+                    Grid.Row="0"
+                      Grid.Column="1"
+                    HorizontalOptions="FillAndExpand"/>
+           
             <Entry Placeholder="Please enter Amount" x:Name="Amount" Keyboard="Numeric"/>
 
         </StackLayout>

@@ -25,7 +25,7 @@
 
         <StackLayout Margin="20,20">
 
-            <ListView x:Name="MyListView" ItemSelected="MyListView_ItemSelected"  ItemsSource="{Binding salarie}">
+            <ListView x:Name="MyListView" ItemSelected="EvetClicked">
                 <ListView.Header>
                     <Grid >
                         <Grid.ColumnDefinitions>

@@ -13,17 +13,18 @@ namespace MoneyApp.XamForms
     {
         int spendItemId;
         globals global;
+        Boolean isLoadFirstTime = true; 
         double total;
         double totalBudget;
         double oldAmount;
-        string dateString = "";
+        string dateString = ""; 
 
         public Spend()
         {
-           
+            InitializeComponent();
             DateTime dt = DateTime.Now;
             dateString = dt.ToString("yyyy-MM-dd HH:mm:ss.FFF");
-            InitializeComponent();
+          
         }
 
         private async void Button_Clicked(object sender, EventArgs e)
@@ -40,8 +41,6 @@ namespace MoneyApp.XamForms
                     {
                         item = drpBudgetItems.SelectedItem.ToString(),
                         amount = double.Parse(Amount.Text),
-
-
                         addedAt = dateString.ToString(),
                         updatedAt = dateString.ToString()
 
@@ -51,13 +50,20 @@ namespace MoneyApp.XamForms
                     {
                         conn.CreateTable<spendMoney>();
                         int rows = conn.Insert(add);
+                        var result =
+                 await DisplayAlert("Confirmation",
+                 "Are you sure?",
+                 "OK", "Cancel");
+                        if (result == true)
+                        {
 
-                        deductFromTotal();
+                            deductFromTotal();
+                        }
 
-
-
-                        OnAppearing();
                     }
+                   // drpBudgetItems.SelectedIndex = -1;
+                    Amount.Text = "";
+                    OnAppearing();
                 }
             }
             catch (FormatException)
@@ -81,10 +87,17 @@ namespace MoneyApp.XamForms
                 global = new globals();
                 conn.CreateTable<spendMoney>();
                 var salarie = conn.Table<spendMoney>().ToList();
-                MyListView.ItemsSource = global.getMonthlyItems();
-                drpBudgetItems.ItemsSource = global.getMonthlySpendItems();
-                TotalSpend.Text = global.getSavingsTotal().ToString();
+                
             }
+            if (isLoadFirstTime)
+            {
+                drpBudgetItems.ItemsSource = global.getMonthlySpendItems();
+                isLoadFirstTime = false;
+            }
+            else {
+                TotalSpend.Text = global.getOutstandingAmountperBudgetItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
+            }
+            
         }
 
         private async void Edit_Clicked(object sender, EventArgs e)
@@ -134,7 +147,7 @@ namespace MoneyApp.XamForms
                   await DisplayAlert("Confirmation",
                   "Are you sure?",
                   "OK", "Cancel");
-                if (result == true && drpBudgetItems.SelectedIndex == -1 && !Amount.Text.Equals(""))
+                if (result == true && drpBudgetItems.SelectedIndex != -1 && !Amount.Text.Equals(""))
                 {
                     using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                     {
@@ -177,26 +190,17 @@ namespace MoneyApp.XamForms
             return updateAmount;
         }
 
-        private async void deductFromTotal()
+        private void deductFromTotal()
         {
-            var result =
-                 await DisplayAlert("Confirmation",
-                 "Are you sure?",
-                 "OK", "Cancel");
-            if (result == true)
-            {
-                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                {
-                    conn.CreateTable<ActiveMoney>();
-                    var foreign = conn.Query<ActiveMoney>("SELECT mySalary FROM ActiveMoney");
+            
+                
+            global = new globals();
+            var selectedItm = drpBudgetItems.Items[drpBudgetItems.SelectedIndex];
+            var boughtItemPrice = global.getOutstandingAmountperBudgetItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]) - Double.Parse(Amount.Text);
+            global.updateBudget(boughtItemPrice.ToString(), selectedItm);
 
-
-                    global = new globals();
-                    totalBudget = global.calculateMinusOnTotal(double.Parse(Amount.Text));
-                    var updateMarks = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", totalBudget);
-
-                }
-            }
+                
+            
         }
 
         private async void clearall_Clicked(object sender, EventArgs e)
@@ -215,8 +219,22 @@ namespace MoneyApp.XamForms
 
                         
                     }
-                OnAppearing();
+            drpBudgetItems.SelectedIndex = -1;
+            Amount.Text = "";
+            OnAppearing();
             
+        }
+
+        private void drpBudgetItems_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+            var selectedItm = drpBudgetItems.Items[drpBudgetItems.SelectedIndex];
+            TotalSpend.Text = global.getOutstandingAmountperBudgetItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
+
+            MyListView.ItemsSource = global.getMonthlyItems(selectedItm);
+            TotalOutstanding.Text = global.getMonthlySpendAmountperItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
+            //OnAppearing();
+
         }
     }
 }

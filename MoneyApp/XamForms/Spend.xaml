@@ -12,7 +12,7 @@
             <Picker Title="PLEASE SELECT BUDGET ITEM" x:Name="drpBudgetItems"
                     Grid.Row="0"
                       Grid.Column="1"
-                    HorizontalOptions="FillAndExpand"/>
+                    HorizontalOptions="FillAndExpand" SelectedIndexChanged="drpBudgetItems_SelectedIndexChanged"/>
            
             <Entry Placeholder="Please enter Amount" x:Name="Amount" Keyboard="Numeric"/>
 
@@ -29,6 +29,8 @@
             <Label Text="Total"/>
             <Label x:Name="TotalSpend"/>
 
+            <Label Text="Outstanding balance"/>
+            <Label x:Name="TotalOutstanding"/>
         </StackLayout>
         
         

@@ -120,13 +120,7 @@ namespace MoneyApp.XamForms
                       "OK", "Cancel");
                     if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
                     {
-                        using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
-                        {
-                            conn.CreateTable<BudgetCls>();
-                            var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget Set item  = ? , amount = ? WHERE id = ?", Item.Text, Amount.Text, ide);
-
-
-                        }
+                        global.updateBudget(Amount.Text, "");
                     }
                     Item.Text = "";
                     Amount.Text = "";
@@ -183,18 +177,7 @@ namespace MoneyApp.XamForms
 
         private async void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            try
-            {
-                var obj = (BudgetCls)e.SelectedItem;
-                ide = Convert.ToInt32(obj.id);
-
-                Item.Text = obj.item;
-                Amount.Text = obj.amount.ToString();
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Alert", ex.ToString(), "OK");
-            }
+            
 
         }
 
@@ -295,13 +278,29 @@ namespace MoneyApp.XamForms
             {
 
                 conn.CreateTable<BudgetCls>();
-                var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget", ide);
+                var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget");
 
 
             }
             Item.Text = "";
             Amount.Text = "";
             OnAppearing();
+        }
+
+        private async void EvetClicked(object sender, SelectedItemChangedEventArgs e)
+        {
+            try
+            {
+                var obj = (BudgetCls)e.SelectedItem;
+                ide = Convert.ToInt32(obj.id);
+
+                Item.Text = obj.item;
+                Amount.Text = obj.amount.ToString();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Alert", ex.ToString(), "OK");
+            }
         }
     }
 }

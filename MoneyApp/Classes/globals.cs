@@ -105,21 +105,7 @@ namespace MoneyApp.Classes
             using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
             {
                 conn.CreateTable<BudgetCls>();
-                MonthlybudgetItemsList = conn.Query<BudgetCls>("SELECT item, amount FROM Budget WHERE isActive = 1");
-
-                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
-
-
-
-                //foreach (var fK in MonthlybudgetItemsList)
-                //{
-                //    if (!string.IsNullOrEmpty(fK.amount.ToString()))
-                //    {
-                //        Fkey = fK.amount;
-                //    }
-
-
-                //}
+                MonthlybudgetItemsList = conn.Query<BudgetCls>("SELECT id, item, amount FROM Budget WHERE isActive = 1");
 
             }
 
@@ -127,7 +113,26 @@ namespace MoneyApp.Classes
             return MonthlybudgetItemsList;
         }
 
-        public List<spendMoney> getMonthlyItems()
+        public double getOutstandingAmountperBudgetItem(string item)
+        {
+            double amountleftPerBudgetList = 0.0;
+            List<BudgetCls> amountOutstanding = new List<BudgetCls>();
+            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            {
+                conn.CreateTable<BudgetCls>();
+                amountOutstanding = conn.Query<BudgetCls>("SELECT amount FROM Budget WHERE isActive = 1 AND item = ?", item);
+
+            }
+
+            foreach (var myBudgetTotal in amountOutstanding)
+            {
+
+                amountleftPerBudgetList = myBudgetTotal.amount;
+            }
+            return amountleftPerBudgetList;
+        }
+
+        public List<spendMoney> getMonthlyItems(string selectedItem)
         {
 
             List<spendMoney> monthlyIncomeList = new List<spendMoney>();
@@ -151,20 +156,20 @@ namespace MoneyApp.Classes
                     string startDate = startOfMonth.ToString("yyyy/MM/dd HH:mm:ss.FFF");
                     string endDate = endOfTheMonth.ToString("yyyy/MM/dd HH:mm:ss.FFF");
                     string startDateDecember = endOfMonthDecember.ToString("yyyy/MM/dd HH:mm:ss.FFF");
-                    sql = "SELECT id, mySalary, mySource, date FROM Money";
-                    monthlyIncomeList = conn.Query<spendMoney>(sql);
+                    //sql = "SELECT id, mySalary, mySource, date FROM Money";
+                    //monthlyIncomeList = conn.Query<spendMoney>(sql);
 
                     if ((now.Day >= 28) && (now.Day <= DaysInMonth))
                     {
-                        sql = "SELECT item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN '" + startDate + "' AND '" + endDate + "'";
+                        sql = "SELECT id, item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN '" + startDate + "' AND '" + endDate + "' AND item = '"+ selectedItem+"'";
                     }
                     else if (now.Month == 1)
                     {
-                        sql = "SELECT item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN  '" + startDateDecember + "' AND '" + endDate + "'";
+                        sql = "SELECT id, item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN  '" + startDateDecember + "' AND '" + endDate + "' AND item = '"+ selectedItem+"'";
                     }
                     else
                     {
-                        sql = "SELECT item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN  '" + startDate + "' AND '" + endDate + "'";
+                        sql = "SELECT id, item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN  '" + startDate + "' AND '" + endDate + "'AND item = '" + selectedItem + "'";
                     }
 
                     return monthlyIncomeList = conn.Query<spendMoney>(sql);
@@ -186,7 +191,7 @@ namespace MoneyApp.Classes
             using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
             {
                 conn.CreateTable<BudgetCls>();
-                var executeSql = conn.Query<BudgetCls>("SELECT item FROM Budget WHERE isActive = 1");
+                var executeSql = conn.Query<BudgetCls>("SELECT id, item FROM Budget WHERE isActive = 1");
 
                 //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
 
@@ -210,7 +215,7 @@ namespace MoneyApp.Classes
 
         public double getSavingsTotalById(string id)
         {
-           
+
             var Fkey = 0.0;
 
             using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
@@ -306,10 +311,10 @@ namespace MoneyApp.Classes
             }
             else
             {
-                diff =  newAmount - oldAmount;
+                diff = newAmount - oldAmount;
                 total = calculateMinusOnTotal(diff);
             }
-                
+
             return total;
         }
 
@@ -317,9 +322,9 @@ namespace MoneyApp.Classes
         {
             List<addSalary> monthlyIncomeList = new List<addSalary>();
 
-             try
+            try
             {
-                
+
                 using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                 {
                     conn.CreateTable<addSalary>();
@@ -327,7 +332,7 @@ namespace MoneyApp.Classes
                     var now = DateTime.Now;
                     int prevMonth = now.AddMonths(-1).Month;
                     int prevYear = now.AddYears(-1).Year;
-                    var startOfMonth = new DateTime(now.Year, now.Month,1);
+                    var startOfMonth = new DateTime(now.Year, now.Month, 1);
                     var DaysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
                     var endOfTheMonth = new DateTime(now.Year, now.Month, DaysInMonth);
                     var endOfMonthDecember = new DateTime(prevYear, prevMonth, 28);
@@ -347,7 +352,7 @@ namespace MoneyApp.Classes
                     {
                         sql = "SELECT id, mySalary, mySource, date FROM Money WHERE date BETWEEN '" + startDateDecember + "' AND '" + endDate + "'";
                     }
-                    else 
+                    else
                     {
                         sql = "SELECT id, mySalary, mySource, date FROM Money WHERE date BETWEEN '" + startDate + "' AND '" + endDate + "'";
                     }
@@ -362,5 +367,80 @@ namespace MoneyApp.Classes
             return monthlyIncomeList;
         }
 
+        public async void updateBudget(string itemAmount, string itemSelected)
+        {
+            try
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<BudgetCls>();
+                    var sql = "UPDATE Budget SET amount = '" + itemAmount + "' WHERE item = '" + itemSelected + "'";
+                    var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget SET amount = '" + itemAmount + "' WHERE item = '" + itemSelected + "'");
+
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+            
+        }
+
+        public double getMonthlySpendAmountperItem(string itemPurchased)
+        {
+
+            List<spendMoney> monthlySpendList = new List<spendMoney>();
+            double monthlySpendTotalOnSelectedItem = 0.0;
+            var sql = "";
+            try
+            {
+                var now = DateTime.Now;
+                int prevMonth = now.AddMonths(-1).Month;
+                int prevYear = now.AddYears(-1).Year;
+                var startOfMonth = new DateTime(now.Year, now.Month, 1);
+                var DaysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                var endOfTheMonth = new DateTime(now.Year, now.Month, DaysInMonth);
+                var endOfMonthDecember = new DateTime(prevYear, prevMonth, 28);
+
+
+                string startDate = startOfMonth.ToString("yyyy/MM/dd HH:mm:ss.FFF");
+                string endDate = endOfTheMonth.ToString("yyyy/MM/dd HH:mm:ss.FFF");
+                string startDateDecember = endOfMonthDecember.ToString("yyyy/MM/dd HH:mm:ss.FFF");
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<spendMoney>();
+                   
+                    sql = "SELECT id, mySalary, mySource, date FROM Money";
+                    monthlySpendList = conn.Query<spendMoney>(sql);
+
+                    if ((now.Day >= 28) && (now.Day <= DaysInMonth))
+                    {
+                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN '" + startDate + "' AND '" + endDate + "'AND item = " + itemPurchased;
+                    }
+                    else if (now.Month == 1)
+                    {
+                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN  '" + startDateDecember + "' AND '" + endDate + "' AND item = " + itemPurchased;
+                    }
+                    else
+                    {
+                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN  '" + startDate + "' AND '" + endDate + "'AND item = " + itemPurchased;
+                    }
+
+                    monthlySpendList = conn.Query<spendMoney>(sql);
+
+                   
+                }
+                foreach (var myBudgetTotal in monthlySpendList)
+                {
+
+                    monthlySpendTotalOnSelectedItem += myBudgetTotal.amount;
+                }
+
+            }
+            catch (Exception ex)
+            {
+            }
+            return monthlySpendTotalOnSelectedItem;
+        }
     }
 }

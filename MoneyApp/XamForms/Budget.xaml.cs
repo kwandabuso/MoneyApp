@@ -10,7 +10,7 @@ namespace MoneyApp.XamForms
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Budget : ContentPage
     {
-        int ide;
+        string itemId;
         globals global;
         double totalBudget;
         public Budget()
@@ -25,7 +25,12 @@ namespace MoneyApp.XamForms
             //TODO: BUDGET confirm if you want to add budget amount
 
             //TODO: display this month budget Items
-
+            if(!itemId.Equals(""))
+            {
+                await DisplayAlert("Alert", "Did you mean EDIT ", "OK");
+            }
+            else
+            {
 
             try
             {
@@ -74,7 +79,8 @@ namespace MoneyApp.XamForms
             {
                 await DisplayAlert("Alert", ex.ToString(), "OK");
             }
-            
+            }
+
         }
 
         protected override async void OnAppearing()
@@ -120,7 +126,7 @@ namespace MoneyApp.XamForms
                       "OK", "Cancel");
                     if (result == true && !Item.Text.Equals("") && !Amount.Text.Equals(""))
                     {
-                        global.updateBudget(Amount.Text, "");
+                        global.updateBudget(Amount.Text, itemId);
                     }
                     Item.Text = "";
                     Amount.Text = "";
@@ -158,7 +164,7 @@ namespace MoneyApp.XamForms
                         {
 
                             conn.CreateTable<BudgetCls>();
-                            var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget WHERE id = ?", ide);
+                            var updateMarks = conn.ExecuteScalar<BudgetCls>("DELETE FROM Budget WHERE id = ?", itemId);
 
                            
                         }
@@ -292,7 +298,7 @@ namespace MoneyApp.XamForms
             try
             {
                 var obj = (BudgetCls)e.SelectedItem;
-                ide = Convert.ToInt32(obj.id);
+                itemId = (obj.id).ToString();
 
                 Item.Text = obj.item;
                 Amount.Text = obj.amount.ToString();

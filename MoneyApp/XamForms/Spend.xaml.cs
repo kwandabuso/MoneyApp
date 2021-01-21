@@ -95,6 +95,8 @@ namespace MoneyApp.XamForms
                 isLoadFirstTime = false;
             }
             else {
+                var selectedItm = drpBudgetItems.Items[drpBudgetItems.SelectedIndex];
+                MyListView.ItemsSource = global.getMonthlyItems(selectedItm);
                 TotalSpend.Text = global.getOutstandingAmountperBudgetItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
             }
             
@@ -119,18 +121,21 @@ namespace MoneyApp.XamForms
                     using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                     {
                         conn.CreateTable<spendMoney>();
-                        var updateMarks = conn.ExecuteScalar<spendMoney>("UPDATE Spend Set item  = ? , amount = ? , updatedAt = ? WHERE , id = ?", drpBudgetItems.SelectedItem, Amount.Text, dateString.ToString(), spendItemId);
+                        var sql = "UPDATE Spend SET amount = '"+ Amount.Text +"' , updatedAt ='"+ dateString.ToString() + "' WHERE  id ='"+spendItemId+"'";
+                       var updateMarks = conn.ExecuteScalar<spendMoney>(sql);
 
-                        total = 0;
-                        global = new globals();
-                        total = global.calculateDifferenceOnTotal(oldAmount,double.Parse(Amount.Text));
+                        //total = 0;
+                        //global = new globals();
+                        //total = global.calculateDifferenceOnTotal(oldAmount,double.Parse(Amount.Text));
 
-                        var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
-                        drpBudgetItems.SelectedIndex = -1;
+                        //var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
+                        //drpBudgetItems.SelectedIndex = -1;
+                        OnAppearing();
                         Amount.Text = "";
                     }
+
+                    
                 }
-                OnAppearing();
             }
 
         }
@@ -232,7 +237,7 @@ namespace MoneyApp.XamForms
             TotalSpend.Text = global.getOutstandingAmountperBudgetItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
 
             MyListView.ItemsSource = global.getMonthlyItems(selectedItm);
-            TotalOutstanding.Text = global.getMonthlySpendAmountperItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
+            //TotalOutstanding.Text = global.getMonthlySpendAmountperItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
             //OnAppearing();
 
         }

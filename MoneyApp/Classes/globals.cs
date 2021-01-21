@@ -367,15 +367,15 @@ namespace MoneyApp.Classes
             return monthlyIncomeList;
         }
 
-        public async void updateBudget(string itemAmount, string itemSelected)
+        public async void updateBudget(string itemAmount, string itemId)
         {
             try
             {
                 using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                 {
                     conn.CreateTable<BudgetCls>();
-                    var sql = "UPDATE Budget SET amount = '" + itemAmount + "' WHERE item = '" + itemSelected + "'";
-                    var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget SET amount = '" + itemAmount + "' WHERE item = '" + itemSelected + "'");
+                    var sql = "UPDATE Budget SET amount = '" + itemAmount + "' WHERE id = '" + itemId + "'";
+                    var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget SET amount = '" + itemAmount + "' WHERE item = '" + itemId + "'");
 
                 }
             }

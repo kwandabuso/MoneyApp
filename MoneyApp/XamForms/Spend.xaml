@@ -29,8 +29,7 @@
             <Label Text="Total"/>
             <Label x:Name="TotalSpend"/>
 
-            <Label Text="Outstanding balance"/>
-            <Label x:Name="TotalOutstanding"/>
+            
         </StackLayout>
         
         

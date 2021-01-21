@@ -8,8 +8,7 @@
 
     <StackLayout>
         <!-- Place new controls here -->
-        <Button x:Name="Add" Text="ADD" TextColor="White" FontSize="50" BackgroundColor="#211a23" Margin="1" HeightRequest="120" Clicked="Add_Clicked"/>
-
+        
         <Button x:Name="budget" Text="budget" TextColor="White" FontSize="50" BackgroundColor= "#211a23" Margin="1" HeightRequest="120" Clicked="budget_Clicked"/>
 
         <Button x:Name="spend" Text="spend" TextColor="White" FontSize="50" BackgroundColor="#211a23" Margin="1" HeightRequest="120" Clicked="spend_Clicked"/>

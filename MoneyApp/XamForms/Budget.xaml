@@ -35,34 +35,32 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Label Text="ITEM" Grid.Column="0" Grid.Row="0"/>
-                        <Label Text="AMOUNT" Grid.Column="1" Grid.Row="0" />
-
-
+                        <Label Text="ITEM" FontAttributes="Bold" Grid.Column="0" Grid.Row="0" FontSize="Large"/>
+                        <Label Text="AMOUNT" FontAttributes="Bold" Grid.Column="1" Grid.Row="0"  FontSize="Large"/>
                     </Grid>
                 </ListView.Header>
-
-
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell >
                             <Grid>
+                                
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Label Text = "{Binding item}" FontSize="Medium" Grid.Column="0"/>
-                                <Label Text = "{Binding amount}" FontSize="Medium" Grid.Column="1"/>
-
+                                
+                                    <Label Text = "{Binding item}" FontSize="Medium" Grid.Column="0"/>
+                                    <Label Text = "{Binding amount}" FontSize="Medium" Grid.Column="1"/>
+                            
                             </Grid>
-                        </ViewCell>
+                       </ViewCell>
 
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </StackLayout>
         <StackLayout Orientation="Horizontal" >
-            <Button x:Name="StartBudget" BackgroundColor="Red" HorizontalOptions="FillAndExpand" Text="START MONTH" Clicked="StartBudget_Clicked"/>
+            <!--<Button x:Name="StartBudget" BackgroundColor="Red" HorizontalOptions="FillAndExpand" Text="START MONTH" Clicked="StartBudget_Clicked"/>-->
             
         </StackLayout>
         

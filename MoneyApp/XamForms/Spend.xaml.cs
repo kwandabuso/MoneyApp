@@ -125,11 +125,15 @@ namespace MoneyApp.XamForms
                        var updateMarks = conn.ExecuteScalar<spendMoney>(sql);
 
                         //total = 0;
-                        //global = new globals();
-                        //total = global.calculateDifferenceOnTotal(oldAmount,double.Parse(Amount.Text));
+                        global = new globals();
+                        total = global.calculateDifferenceOnTotal(oldAmount,double.Parse(Amount.Text));
 
                         //var updateMoney = conn.ExecuteScalar<ActiveMoney>("UPDATE ActiveMoney Set mySalary  = ?", total);
                         //drpBudgetItems.SelectedIndex = -1;
+
+                        global.updateBudgetByItemName(total.ToString(), drpBudgetItems.SelectedItem.ToString());
+
+
                         OnAppearing();
                         Amount.Text = "";
                     }

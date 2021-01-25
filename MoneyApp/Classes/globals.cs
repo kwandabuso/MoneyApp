@@ -367,7 +367,7 @@ namespace MoneyApp.Classes
             return monthlyIncomeList;
         }
 
-        public async void updateBudget(string itemAmount, string itemId)
+        public void updateBudget(string itemAmount, string itemId)
         {
             try
             {
@@ -375,7 +375,7 @@ namespace MoneyApp.Classes
                 {
                     conn.CreateTable<BudgetCls>();
                     var sql = "UPDATE Budget SET amount = '" + itemAmount + "' WHERE id = '" + itemId + "'";
-                    var updateMarks = conn.ExecuteScalar<BudgetCls>("UPDATE Budget SET amount = '" + itemAmount + "' WHERE item = '" + itemId + "'");
+                    var updateMarks = conn.ExecuteScalar<BudgetCls>(sql);
 
                 }
             }
@@ -384,6 +384,25 @@ namespace MoneyApp.Classes
 
             }
             
+        }
+
+        public void updateBudgetByItemName(string itemAmount, string itemName)
+        {
+            try
+            {
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<BudgetCls>();
+                    var sql = "UPDATE Budget SET amount = '" + itemAmount + "' WHERE item = '" + itemName + "' AND isActive = 1";
+                    var updateMarks = conn.ExecuteScalar<BudgetCls>(sql);
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
         }
 
         public double getMonthlySpendAmountperItem(string itemPurchased)
@@ -442,5 +461,57 @@ namespace MoneyApp.Classes
             }
             return monthlySpendTotalOnSelectedItem;
         }
+
+        public string getMonthlyItemsTotal(string selectedItem)
+        {
+
+            List<spendMoney> monthlyIncomeList = new List<spendMoney>();
+            string totalPerItem = "";
+            try
+            {
+
+                using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+                {
+                    conn.CreateTable<spendMoney>();
+                    var sql = "";
+                    var now = DateTime.Now;
+                    int prevMonth = now.AddMonths(-1).Month;
+                    int prevYear = now.AddYears(-1).Year;
+                    var startOfMonth = new DateTime(now.Year, now.Month, 1);
+                    var DaysInMonth = DateTime.DaysInMonth(now.Year, now.Month);
+                    var endOfTheMonth = new DateTime(now.Year, now.Month, DaysInMonth);
+                    var endOfMonthDecember = new DateTime(prevYear, prevMonth, 28);
+
+
+                    string startDate = startOfMonth.ToString("yyyy/MM/dd HH:mm:ss.FFF");
+                    string endDate = endOfTheMonth.ToString("yyyy/MM/dd HH:mm:ss.FFF");
+                    string startDateDecember = endOfMonthDecember.ToString("yyyy/MM/dd HH:mm:ss.FFF");
+                    //sql = "SELECT id, mySalary, mySource, date FROM Money";
+                    //monthlyIncomeList = conn.Query<spendMoney>(sql);
+
+                    if ((now.Day >= 28) && (now.Day <= DaysInMonth))
+                    {
+                        sql = "SELECT id, item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN '" + startDate + "' AND '" + endDate + "' AND item = '" + selectedItem + "'";
+                    }
+                    else if (now.Month == 1)
+                    {
+                        sql = "SELECT id, item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN  '" + startDateDecember + "' AND '" + endDate + "' AND item = '" + selectedItem + "'";
+                    }
+                    else
+                    {
+                        sql = "SELECT id, item, Amount, addedAt FROM Spend WHERE addedAt BETWEEN  '" + startDate + "' AND '" + endDate + "'AND item = '" + selectedItem + "'";
+                    }
+
+                    totalPerItem =conn.Query<spendMoney>(sql).ToString();
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return totalPerItem;
+        }
+
     }
 }

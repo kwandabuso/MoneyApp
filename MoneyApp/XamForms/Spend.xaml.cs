@@ -49,15 +49,21 @@ namespace MoneyApp.XamForms
                     using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
                     {
                         conn.CreateTable<spendMoney>();
-                        int rows = conn.Insert(add);
+                        
                         var result =
                  await DisplayAlert("Confirmation",
                  "Are you sure?",
                  "OK", "Cancel");
-                        if (result == true)
+                        if (result == true && checkIfMoneyLeftToSpend())
                         {
-
-                            deductFromTotal();
+                            int rows = conn.Insert(add);
+                            //deductFromTotal();
+                        }
+                        else
+                        {
+                            await DisplayAlert("Confirmation",
+                 "Please check your amount, balance cannot go to 0",
+                 "OK");
                         }
 
                     }
@@ -97,7 +103,8 @@ namespace MoneyApp.XamForms
             else {
                 var selectedItm = drpBudgetItems.Items[drpBudgetItems.SelectedIndex];
                 MyListView.ItemsSource = global.getMonthlyItems(selectedItm);
-                TotalSpend.Text = global.getOutstandingAmountperBudgetItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
+                TotalSpend.Text = getMoneyLeftToSpend().ToString();
+               // TotalSpend.Text = global.getMonthlyBudgetAmountPerItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
             }
             
         }
@@ -238,11 +245,36 @@ namespace MoneyApp.XamForms
         {
             
             var selectedItm = drpBudgetItems.Items[drpBudgetItems.SelectedIndex];
-            TotalSpend.Text = global.getOutstandingAmountperBudgetItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
-
+            //TotalSpend.Text = global.getOutstandingAmountperBudgetItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
+            TotalSpend.Text = getMoneyLeftToSpend().ToString();
             MyListView.ItemsSource = global.getMonthlyItems(selectedItm);
             //TotalOutstanding.Text = global.getMonthlySpendAmountperItem(drpBudgetItems.Items[drpBudgetItems.SelectedIndex]).ToString();
             //OnAppearing();
+
+        }
+
+        private bool checkIfMoneyLeftToSpend()
+        {
+            double spendItemTotal = global.getMonthlySpendAmountperItem(drpBudgetItems.SelectedItem.ToString());
+
+            double budgetedTotal = global.getOutstandingAmountperBudgetItem(drpBudgetItems.SelectedItem.ToString());
+
+            double getDifference = budgetedTotal - spendItemTotal;
+
+            if (getDifference >= Double.Parse(Amount.Text))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private double getMoneyLeftToSpend()
+        {
+            double spendItemTotal = global.getMonthlySpendAmountperItem(drpBudgetItems.SelectedItem.ToString());
+
+            double budgetedTotal = global.getOutstandingAmountperBudgetItem(drpBudgetItems.SelectedItem.ToString());
+
+            return budgetedTotal - spendItemTotal;
 
         }
     }

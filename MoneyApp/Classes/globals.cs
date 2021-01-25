@@ -429,20 +429,20 @@ namespace MoneyApp.Classes
                 {
                     conn.CreateTable<spendMoney>();
                    
-                    sql = "SELECT id, mySalary, mySource, date FROM Money";
-                    monthlySpendList = conn.Query<spendMoney>(sql);
+                    //sql = "SELECT id, mySalary, mySource, date FROM Spend";
+                    //monthlySpendList = conn.Query<spendMoney>(sql);
 
                     if ((now.Day >= 28) && (now.Day <= DaysInMonth))
                     {
-                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN '" + startDate + "' AND '" + endDate + "'AND item = " + itemPurchased;
+                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN '" + startDate + "' AND '" + endDate + "'AND item = '" + itemPurchased + "'";
                     }
                     else if (now.Month == 1)
                     {
-                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN  '" + startDateDecember + "' AND '" + endDate + "' AND item = " + itemPurchased;
+                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN  '" + startDateDecember + "' AND '" + endDate + "' AND item = '" + itemPurchased+"'";
                     }
                     else
                     {
-                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN  '" + startDate + "' AND '" + endDate + "'AND item = " + itemPurchased;
+                        sql = "SELECT Amount FROM Spend WHERE addedAt BETWEEN  '" + startDate + "' AND '" + endDate + "'AND item = '" + itemPurchased + "'";
                     }
 
                     monthlySpendList = conn.Query<spendMoney>(sql);
@@ -513,5 +513,31 @@ namespace MoneyApp.Classes
             return totalPerItem;
         }
 
+        public double getMonthlyBudgetAmountPerItem( string budgetItem)
+        {
+            //double MonthlybudgetItemsList;
+            double MonthlybudgetItemsList = 0.0;
+
+            using (SQLiteConnection conn = new SQLiteConnection(App.filePath))
+            {
+                conn.CreateTable<BudgetCls>();
+                var executeSql = conn.Query<BudgetCls>("SELECT amount FROM Budget WHERE item = '"+ budgetItem + "' AND isActive = 1");
+
+                //conn.Execute("UPDATE Money SET isActive = false WHERE id =1");
+
+                MonthlybudgetItemsList += double.Parse(executeSql.ToString());
+
+
+                //foreach (var myBudgetTotal in executeSql)
+                //{
+
+                //    MonthlybudgetItemsList += double.Parse(myBudgetTotal.amount.ToString());
+                //}
+
+            }
+
+
+            return MonthlybudgetItemsList;
+        }
     }
 }

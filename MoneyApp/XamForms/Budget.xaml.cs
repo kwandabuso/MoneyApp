@@ -25,7 +25,7 @@ namespace MoneyApp.XamForms
             //TODO: BUDGET confirm if you want to add budget amount
 
             //TODO: display this month budget Items
-            if(!itemId.Equals(""))
+            if(!String.IsNullOrEmpty(itemId))
             {
                 await DisplayAlert("Alert", "Did you mean EDIT ", "OK");
             }
